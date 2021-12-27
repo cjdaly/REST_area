@@ -13,20 +13,16 @@ import client.RestClient;
 
 public class ApacheClient extends RestClient {
 
-	private String _urlBase;
 	private CloseableHttpClient _httpClient;
 
-	public ApacheClient() {
-		this("http://localhost:5000/");
-	}
-
 	public ApacheClient(String urlBase) {
-		_urlBase = urlBase;
-		HttpClientBuilder b = HttpClientBuilder.create();
-		_httpClient = b.build();
+		super(urlBase);
+		_httpClient = HttpClientBuilder.create().build();
 	}
 
 	public void doGet(String endpoint) {
+		System.out.println("ApacheClient: doGet(" + endpoint + ")");
+		
 		HttpGet get = new HttpGet(_urlBase + endpoint);
 		get.addHeader("accept", "text/plain");
 		try {
