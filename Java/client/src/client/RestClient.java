@@ -18,6 +18,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+/**
+ * RestClient is the abstract base class for specific REST client
+ * implementations.
+ */
 public abstract class RestClient {
 
 	protected String _urlBase;
@@ -51,8 +55,26 @@ public abstract class RestClient {
 		System.out.println("------------");
 	}
 
+	/**
+	 * Performs an HTTP GET with the specified <code>endpoint</code>.
+	 */
 	public abstract void doGet(String endpoint);
 
+	/**
+	 * Performs an HTTP PUT on the specified <code>endpoint</code> with
+	 * <code>value</code>.
+	 */
 	public abstract void doPut(String endpoint, String value);
+
+	/**
+	 * Performs an HTTP POST to the specified <code>endpoint</code> with
+	 * <code>value</code>.
+	 */
+	public abstract void doPost(String endpoint, String value);
+
+	/**
+	 * Performs an HTTP DELETE of the specified <code>endpoint</code>.
+	 */
+	public abstract void doDelete(String endpoint);
 
 }

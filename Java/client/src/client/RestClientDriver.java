@@ -26,7 +26,7 @@ public class RestClientDriver {
 	static final String DEFAULT_SERVER = "http://localhost:5000/";
 
 	static final Pattern OPTION_REGEX = Pattern.compile("^-(\\w+)=(.*)$");
-	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9,=/]*)[)])?$");
+	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9,;=/_~ ]*)[)])?$");
 
 	private String[] _args;
 	private String _serverUrlBase = DEFAULT_SERVER;
@@ -103,12 +103,37 @@ public class RestClientDriver {
 			}
 			break;
 		case "post":
+			if (params.length >= 2) {
+				_client.doPost(params[0], params[1]);
+			}
 			break;
 		case "delete":
+			if (params.length >= 1) {
+				_client.doDelete(params[0]);
+			}
+			break;
+		case "sleep":
+			int millis = params.length == 0 ? 1000 : parseParamInt(params[0], 1000);
+			System.out.println(">>> SLEEP: " + millis);
+			try {
+				Thread.sleep(millis);
+			} catch (InterruptedException e) {
+				// OK
+			}
 			break;
 		default:
 			System.out.println("Unknown command: " + name);
 		}
+	}
+
+	private int parseParamInt(String param, int defaultValue) {
+		int value = defaultValue;
+		try {
+			value = Integer.parseInt(param);
+		} catch (NumberFormatException ex) {
+			// use default
+		}
+		return value;
 	}
 
 }
