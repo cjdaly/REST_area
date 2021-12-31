@@ -46,7 +46,7 @@ public class RestClientDriver {
 			_clientType = value;
 			break;
 		default:
-			System.out.println("Unknown option: " + name + " = " + value);
+			System.out.println("??? Unknown option: " + name + " = " + value);
 		}
 	}
 
@@ -68,6 +68,9 @@ public class RestClientDriver {
 				_client = new HttpURLClient(_serverUrlBase);
 			}
 		}
+
+		System.out.println();
+		System.out.println("RESTstop Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")");
 	}
 
 	/**
@@ -114,7 +117,8 @@ public class RestClientDriver {
 			break;
 		case "sleep":
 			int millis = params.length == 0 ? 1000 : parseParamInt(params[0], 1000);
-			System.out.println(">>> SLEEP: " + millis);
+			System.out.println();
+			System.out.println("! SLEEP: " + millis);
 			try {
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {

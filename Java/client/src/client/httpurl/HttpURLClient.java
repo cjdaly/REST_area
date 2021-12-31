@@ -24,6 +24,10 @@ public class HttpURLClient extends RestClient {
 		super(urlBase);
 	}
 
+	protected String getType() {
+		return "HttpURL";
+	}
+
 	private HttpURLConnection initConnection(String urlText, String httpMethod, boolean doOutput) throws IOException {
 		URL url = new URL(urlText);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -36,7 +40,8 @@ public class HttpURLClient extends RestClient {
 	}
 
 	public void doGet(String endpoint) {
-		System.out.println("HttpURLClient: doGet(" + endpoint + ")");
+		showCommand(endpoint, "GET");
+
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "GET", false);
 
@@ -49,7 +54,8 @@ public class HttpURLClient extends RestClient {
 	}
 
 	public void doPut(String endpoint, String value) {
-		System.out.println("HttpURLClient: doPut(" + endpoint + ")");
+		showCommand(endpoint, "PUT");
+
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "PUT", true);
 
@@ -66,7 +72,8 @@ public class HttpURLClient extends RestClient {
 	}
 
 	public void doPost(String endpoint, String value) {
-		System.out.println("HttpURLClient: doPost(" + endpoint + ")");
+		showCommand(endpoint, "POST");
+
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "POST", true);
 
@@ -83,7 +90,8 @@ public class HttpURLClient extends RestClient {
 	}
 
 	public void doDelete(String endpoint) {
-		System.out.println("HttpURLClient: doDelete(" + endpoint + ")");
+		showCommand(endpoint, "DELETE");
+
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "DELETE", false);
 

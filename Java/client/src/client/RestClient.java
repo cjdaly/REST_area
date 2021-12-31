@@ -30,6 +30,11 @@ public abstract class RestClient {
 		_urlBase = urlBase;
 	}
 
+	/**
+	 * @return a unique type name for the RestClient implementation
+	 */
+	protected abstract String getType();
+
 	protected void sendContent(OutputStream output, String content) throws IOException {
 		OutputStreamWriter writer = new OutputStreamWriter(output);
 		writer.write(content);
@@ -44,15 +49,21 @@ public abstract class RestClient {
 		return true;
 	}
 
+	protected void showCommand(String endpoint, String method) {
+		System.out.println();
+		System.out.println("--------------------");
+		System.out.println("! " + method + " /" + endpoint);
+	}
+
 	protected void showResponse(InputStream input) throws IOException {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		System.out.println("---Response:");
+		System.out.println("----[Response]------");
 		String line = reader.readLine();
 		while (line != null) {
 			System.out.println(line);
 			line = reader.readLine();
 		}
-		System.out.println("------------");
+		System.out.println("--------------------");
 	}
 
 	/**

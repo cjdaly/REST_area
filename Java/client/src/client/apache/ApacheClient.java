@@ -34,13 +34,17 @@ public class ApacheClient extends RestClient {
 		_httpClient = HttpClientBuilder.create().build();
 	}
 
+	protected String getType() {
+		return "Apache";
+	}
+
 	private void initRequest(HttpRequest req) {
 		req.addHeader("accept", "text/plain");
 		req.addHeader("content-type", "text/plain");
 	}
 
 	public void doGet(String endpoint) {
-		System.out.println("ApacheClient: doGet(" + endpoint + ")");
+		showCommand(endpoint, "GET");
 
 		HttpGet get = new HttpGet(_urlBase + endpoint);
 		initRequest(get);
@@ -58,7 +62,7 @@ public class ApacheClient extends RestClient {
 	}
 
 	public void doPut(String endpoint, String value) {
-		System.out.println("ApacheClient: doPut(" + endpoint + ")");
+		showCommand(endpoint, "PUT");
 
 		HttpPut put = new HttpPut(_urlBase + endpoint);
 		initRequest(put);
@@ -77,7 +81,7 @@ public class ApacheClient extends RestClient {
 	}
 
 	public void doPost(String endpoint, String value) {
-		System.out.println("ApacheClient: doPost(" + endpoint + ")");
+		showCommand(endpoint, "POST");
 
 		HttpPost post = new HttpPost(_urlBase + endpoint);
 		initRequest(post);
@@ -96,7 +100,7 @@ public class ApacheClient extends RestClient {
 	}
 
 	public void doDelete(String endpoint) {
-		System.out.println("ApacheClient: doDelete(" + endpoint + ")");
+		showCommand(endpoint, "DELETE");
 
 		HttpDelete del = new HttpDelete(_urlBase + endpoint);
 		initRequest(del);
