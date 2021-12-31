@@ -27,4 +27,8 @@ A place for REST...
 - about Flask use of Python decorators:
   - https://ains.co/blog/things-which-arent-magic-flask-part-1.html
   - https://ains.co/blog/things-which-arent-magic-flask-part-2.html
-
+- Dockerizing Flask:
+  - https://docs.docker.com/language/python/build-images/
+  - about requirements.txt: https://pip.pypa.io/en/latest/user_guide/#requirements-files
+  - Dockerfile ref: https://docs.docker.com/engine/reference/builder/
+  - VS Code: https://code.visualstudio.com/docs/containers/quickstart-python
