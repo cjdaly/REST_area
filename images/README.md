@@ -2,6 +2,6 @@
 ### REST AREA
 
 source: https://www.oregon.gov/ODOT/Engineering/Documents_TrafficStandards/Sign-Policy-00-Full.pdf
-- page 5-19
+- from page 5-19:
 
 ![REST AREA](RESTarea.png)
