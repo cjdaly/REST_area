@@ -15,13 +15,13 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-    return "Hello from RESTstop server!"
+    return "Hello from RESTarea server!"
 
 ########
 # /sys - system interface
 @app.route("/sys")
 def sys():
-    return "RESTstop system interface!"
+    return "RESTarea system interface!"
 #
 @app.route("/sys/<name>", methods=["PUT"])
 def sys_name(name):
@@ -29,7 +29,7 @@ def sys_name(name):
         val = request.get_data().decode("utf-8")
         if name == "RESET" and val == "!RESET!":
             reset()
-            return "RESTstop server reset!"
+            return "RESTarea server reset!"
         return "Unsupported system command: {} / {}".format(name, val)
 
 ##########
@@ -97,7 +97,7 @@ def msg(id):
 
 # reset server data to initial state
 def reset():
-    print("RESTstop server reset!")
+    print("RESTarea server reset!")
     # reset properties
     _props.clear()
     _props['test'] = "Hello World!"

@@ -57,7 +57,7 @@ public class RestClientDriver {
 
 		_logger.writeOutputs( //
 				"", // blank line
-				"RESTstop Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")" //
+				"RESTarea Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")" //
 		);
 	}
 
