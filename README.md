@@ -2,6 +2,8 @@
 
 A place for REST...
 
+![REST AREA](images/RESTarea.png)
+
 ## Reference info
 
 ### media types (MIME)
