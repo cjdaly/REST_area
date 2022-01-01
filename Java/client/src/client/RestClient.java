@@ -12,6 +12,8 @@
 package client;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,7 +51,7 @@ public abstract class RestClient {
 
 	protected boolean checkResponseCode(int code) {
 		if (code != 200) {
-			_logger.writeError("HTTP Error: " + code);
+			_logger.writeError("??? HTTP Error: " + code);
 			return false;
 		}
 		return true;
@@ -91,5 +93,44 @@ public abstract class RestClient {
 	 * Performs an HTTP DELETE of the specified <code>endpoint</code>.
 	 */
 	public abstract void doDelete(String endpoint);
+
+	/**
+	 * Performs an HTTP PUT to the specified <code>endpoint</code> with the contents
+	 * of the file specified by <code>pathname</code>.
+	 */
+	public void doPutFile(String endpoint, String pathname) {
+		String filedata = getFileData(pathname);
+		if (filedata != null) {
+			doPut(endpoint, filedata);
+		}
+	}
+
+	/**
+	 * Performs an HTTP POST to the specified <code>endpoint</code> with the
+	 * contents of the file specified by <code>pathname</code>.
+	 */
+	public void doPostFile(String endpoint, String pathname) {
+		String filedata = getFileData(pathname);
+		if (filedata != null) {
+			doPost(endpoint, filedata);
+		}
+	}
+
+	private String getFileData(String pathname) {
+		StringBuilder filedata = new StringBuilder();
+		File file = new File(pathname);
+		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+			String line = reader.readLine();
+			while (line != null) {
+				filedata.append(line);
+				filedata.append("\n");
+				line = reader.readLine();
+			}
+		} catch (IOException e) {
+			_logger.writeError(e.getMessage());
+			return null;
+		}
+		return filedata.toString();
+	}
 
 }

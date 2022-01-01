@@ -57,7 +57,7 @@ public class ApacheClient extends RestClient {
 				showResponse(response.getEntity().getContent());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -76,7 +76,7 @@ public class ApacheClient extends RestClient {
 				showResponse(response.getEntity().getContent());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -95,7 +95,7 @@ public class ApacheClient extends RestClient {
 				showResponse(response.getEntity().getContent());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -113,7 +113,7 @@ public class ApacheClient extends RestClient {
 				showResponse(response.getEntity().getContent());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 

@@ -26,7 +26,7 @@ public class RestClientDriver {
 	static final String DEFAULT_SERVER = "http://localhost:5000/";
 
 	static final Pattern OPTION_REGEX = Pattern.compile("^-(\\w+)=(.*)$");
-	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9,;/?=!_~ ]*)[)])?$");
+	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
 
 	private String[] _args;
 	private String _serverUrlBase = DEFAULT_SERVER;
@@ -106,7 +106,7 @@ public class RestClientDriver {
 			if (matcher.matches()) {
 				processCommand(matcher.group(1), matcher.group(3));
 			} else {
-				_logger.writeError("Unrecognized command: " + arg);
+				_logger.writeError("??? Unrecognized command: " + arg);
 			}
 		}
 	}
@@ -126,11 +126,29 @@ public class RestClientDriver {
 		case "put":
 			if (params.length >= 2) {
 				_client.doPut(params[0], params[1]);
+			} else {
+				_logger.writeError("??? Missing param to PUT!");
+			}
+			break;
+		case "putfile":
+			if (params.length >= 2) {
+				_client.doPutFile(params[0], params[1]);
+			} else {
+				_logger.writeError("??? Missing param to PUTFILE!");
 			}
 			break;
 		case "post":
 			if (params.length >= 2) {
 				_client.doPost(params[0], params[1]);
+			} else {
+				_logger.writeError("??? Missing param to POST!");
+			}
+			break;
+		case "postfile":
+			if (params.length >= 2) {
+				_client.doPostFile(params[0], params[1]);
+			} else {
+				_logger.writeError("??? Missing param to POSTFILE!");
 			}
 			break;
 		case "delete":
@@ -141,7 +159,7 @@ public class RestClientDriver {
 		case "sleep":
 			int millis = params.length == 0 ? 1000 : parseParamInt(params[0], 1000);
 
-			_logger.writeOutputs("", "! SLEEP: " + millis);
+			_logger.writeOutputs("", "!!! SLEEP: " + millis);
 			try {
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {
@@ -149,7 +167,7 @@ public class RestClientDriver {
 			}
 			break;
 		default:
-			_logger.writeError("Unknown command: " + name);
+			_logger.writeError("??? Unknown command: " + name);
 		}
 	}
 

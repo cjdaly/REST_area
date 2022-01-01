@@ -13,7 +13,6 @@ package client.httpurl;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import client.RestClient;
@@ -49,7 +48,7 @@ public class HttpURLClient extends RestClient {
 				showResponse(con.getInputStream());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -64,10 +63,8 @@ public class HttpURLClient extends RestClient {
 			if (checkResponseCode(con.getResponseCode())) {
 				showResponse(con.getInputStream());
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -82,10 +79,8 @@ public class HttpURLClient extends RestClient {
 			if (checkResponseCode(con.getResponseCode())) {
 				showResponse(con.getInputStream());
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 
@@ -98,10 +93,8 @@ public class HttpURLClient extends RestClient {
 			if (checkResponseCode(con.getResponseCode())) {
 				showResponse(con.getInputStream());
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			_logger.writeError(e.getMessage());
 		}
 	}
 }
