@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 
 /**
  * RestClient is the abstract base class for specific REST client
@@ -25,9 +26,14 @@ import java.io.OutputStreamWriter;
 public abstract class RestClient {
 
 	protected String _urlBase;
+	protected Logger _logger;
 
 	protected RestClient(String urlBase) {
 		_urlBase = urlBase;
+	}
+
+	protected void setLogger(Logger logger) {
+		_logger = logger;
 	}
 
 	/**
@@ -43,27 +49,25 @@ public abstract class RestClient {
 
 	protected boolean checkResponseCode(int code) {
 		if (code != 200) {
-			System.out.println("HTTP Error: " + code);
+			_logger.writeError("HTTP Error: " + code);
 			return false;
 		}
 		return true;
 	}
 
 	protected void showCommand(String endpoint, String method) {
-		System.out.println();
-		System.out.println("--------------------");
-		System.out.println("! " + method + " /" + endpoint);
+		_logger.writeOutputs("", "!!! " + method + " /" + endpoint);
 	}
 
 	protected void showResponse(InputStream input) throws IOException {
+		ArrayList<String> lines = new ArrayList<String>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		System.out.println("----[Response]------");
 		String line = reader.readLine();
 		while (line != null) {
-			System.out.println(line);
+			lines.add(line);
 			line = reader.readLine();
 		}
-		System.out.println("--------------------");
+		_logger.writeOutputs(lines.toArray(new String[0]));
 	}
 
 	/**

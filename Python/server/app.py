@@ -15,16 +15,30 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-    return "<p>Hello from RESTstop server!</p>"
+    return "Hello from RESTstop server!"
 
 ########
-# /props
+# /sys - system interface
+@app.route("/sys")
+def sys():
+    return "RESTstop system interface!"
+#
+@app.route("/sys/<name>", methods=["PUT"])
+def sys_name(name):
+    if request.method == "PUT":
+        val = request.get_data().decode("utf-8")
+        if name == "RESET" and val == "!RESET!":
+            reset()
+            return "RESTstop server reset!"
+        return "Unsupported system command: {} / {}".format(name, val)
+
+##########
+# /props - properties with simple PUT / GET api
 _props = {}
-_props['test'] = "Hello World!"
 #
 @app.route("/props")
 def props():
-    return "<p>{} properties buffered</p>".format(len(_props))
+    return "{} properties buffered".format(len(_props))
 #
 @app.route("/props/<name>", methods=["GET", "PUT", "DELETE"])
 def prop(name):
@@ -48,18 +62,18 @@ def prop(name):
             return Response("Property '{}' not found!".format(name), 404)
 
 
-#######
-# /msgs
-_messages = ["Hello World!"]
+#########
+# /msgs - messages with simple POST / GET api
+_messages = []
 #
 @app.route("/msgs", methods=["GET", "POST"])
 def msgs():
     if request.method == "GET":
-        return "<p>{} messages buffered</p>".format(len(_messages))
+        return "{} messages buffered".format(len(_messages))
     elif request.method == "POST":
         msgNum = len(_messages)
         _messages.append(request.get_data())
-        return "<p>New message #{} posted!</p>".format(msgNum)
+        return "New message #{} posted!".format(msgNum)
 #
 @app.route("/msgs/<int:id>", methods=["GET", "DELETE"])
 def msg(id):
@@ -77,6 +91,18 @@ def msg(id):
         msg = _messages[id]
         if msg:
             _messages[id] = None
-            return "<p>Message #{} deleted!</p>".format(id)
+            return "Message #{} deleted!".format(id)
         else:
             return Response("Message #{} not found!".format(id), 404)
+
+# reset server data to initial state
+def reset():
+    print("RESTstop server reset!")
+    # reset properties
+    _props.clear()
+    _props['test'] = "Hello World!"
+    # reset messages
+    _messages.clear()
+    _messages.append("Hello World!")
+#
+reset()

@@ -26,12 +26,40 @@ public class RestClientDriver {
 	static final String DEFAULT_SERVER = "http://localhost:5000/";
 
 	static final Pattern OPTION_REGEX = Pattern.compile("^-(\\w+)=(.*)$");
-	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9,;=/_~ ]*)[)])?$");
+	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9,;/?=!_~ ]*)[)])?$");
 
 	private String[] _args;
 	private String _serverUrlBase = DEFAULT_SERVER;
 	private String _clientType = "httpurl";
 	private RestClient _client;
+	private Logger _logger;
+
+	/**
+	 * Creates a new RestClientDriver with the supplier program arguments.
+	 */
+	public RestClientDriver(String[] args) {
+		_args = args;
+		_logger = new Logger();
+
+		for (String arg : _args) {
+			Matcher matcher = OPTION_REGEX.matcher(arg);
+			if (matcher.matches()) {
+				processOption(matcher.group(1), matcher.group(2));
+			}
+		}
+
+		if (_clientType.toLowerCase().equals("apache")) {
+			_client = new ApacheClient(_serverUrlBase);
+		} else {
+			_client = new HttpURLClient(_serverUrlBase);
+		}
+		_client.setLogger(_logger);
+
+		_logger.writeOutputs( //
+				"", // blank line
+				"RESTstop Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")" //
+		);
+	}
 
 	/**
 	 * Process <code>-key=value</code> formatted command line options from the
@@ -45,32 +73,25 @@ public class RestClientDriver {
 		case "client":
 			_clientType = value;
 			break;
+		case "logger":
+			switch (value) {
+			case "write":
+				_logger.enableWriting(true, true);
+				break;
+			case "nowrite":
+				_logger.enableWriting(false, false);
+				break;
+			case "buffer":
+				_logger.enableBuffering(true, true);
+				break;
+			case "nobuffer":
+				_logger.enableBuffering(false, false);
+				break;
+			}
+			break;
 		default:
-			System.out.println("??? Unknown option: " + name + " = " + value);
+			_logger.writeError("??? Unknown option: " + name + " = " + value);
 		}
-	}
-
-	/**
-	 * Creates a new RestClientDriver with the supplier program arguments.
-	 */
-	public RestClientDriver(String[] args) {
-		_args = args;
-
-		for (String arg : _args) {
-			Matcher matcher = OPTION_REGEX.matcher(arg);
-			if (matcher.matches()) {
-				processOption(matcher.group(1), matcher.group(2));
-			}
-
-			if ("apache".equals(_clientType)) {
-				_client = new ApacheClient(_serverUrlBase);
-			} else {
-				_client = new HttpURLClient(_serverUrlBase);
-			}
-		}
-
-		System.out.println();
-		System.out.println("RESTstop Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")");
 	}
 
 	/**
@@ -84,6 +105,8 @@ public class RestClientDriver {
 			Matcher matcher = COMMAND_REGEX.matcher(arg);
 			if (matcher.matches()) {
 				processCommand(matcher.group(1), matcher.group(3));
+			} else {
+				_logger.writeError("Unrecognized command: " + arg);
 			}
 		}
 	}
@@ -117,8 +140,8 @@ public class RestClientDriver {
 			break;
 		case "sleep":
 			int millis = params.length == 0 ? 1000 : parseParamInt(params[0], 1000);
-			System.out.println();
-			System.out.println("! SLEEP: " + millis);
+
+			_logger.writeOutputs("", "! SLEEP: " + millis);
 			try {
 				Thread.sleep(millis);
 			} catch (InterruptedException e) {
@@ -126,7 +149,7 @@ public class RestClientDriver {
 			}
 			break;
 		default:
-			System.out.println("Unknown command: " + name);
+			_logger.writeError("Unknown command: " + name);
 		}
 	}
 
