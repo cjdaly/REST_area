@@ -17,8 +17,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 /**
@@ -43,34 +41,13 @@ public abstract class RestClient {
 	 */
 	protected abstract String getType();
 
-	protected void sendContent(OutputStream output, String content) throws IOException {
-		OutputStreamWriter writer = new OutputStreamWriter(output);
-		writer.write(content);
-		writer.close();
+	public Command Get(String endpoint) {
+		Command c = new Command("GET", endpoint);
+		doGet(c._Endpoint);
+		return c;
 	}
 
-	protected boolean checkResponseCode(int code) {
-		if (code != 200) {
-			_logger.writeError("??? HTTP Error: " + code);
-			return false;
-		}
-		return true;
-	}
-
-	protected void showCommand(String endpoint, String method) {
-		_logger.writeOutputs("", "!!! " + method + " /" + endpoint);
-	}
-
-	protected void showResponse(InputStream input) throws IOException {
-		ArrayList<String> lines = new ArrayList<String>();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		String line = reader.readLine();
-		while (line != null) {
-			lines.add(line);
-			line = reader.readLine();
-		}
-		_logger.writeOutputs(lines.toArray(new String[0]));
-	}
+	protected abstract void invoke(Command command);
 
 	/**
 	 * Performs an HTTP GET with the specified <code>endpoint</code>.
@@ -131,6 +108,51 @@ public abstract class RestClient {
 			return null;
 		}
 		return filedata.toString();
+	}
+
+	protected boolean checkResponseCode(int code) {
+		if (code != 200) {
+			_logger.writeError("??? HTTP Error: " + code);
+			return false;
+		}
+		return true;
+	}
+
+	protected void showCommand(String endpoint, String method) {
+		_logger.writeOutputs("", "!!! " + method + " /" + endpoint);
+	}
+
+	protected void showResponse(InputStream input) throws IOException {
+		ArrayList<String> lines = new ArrayList<String>();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+		String line = reader.readLine();
+		while (line != null) {
+			lines.add(line);
+			line = reader.readLine();
+		}
+		_logger.writeOutputs(lines.toArray(new String[0]));
+	}
+
+	public class Command {
+		public final String _Method;
+		public final String _Endpoint;
+		public final String _Body;
+		public final boolean _File;
+
+		Command(String method, String endpoint, String body, boolean isFile) {
+			_Method = method;
+			_Endpoint = endpoint;
+			_Body = body;
+			_File = isFile;
+		}
+
+		Command(String method, String endpoint) {
+			this(method, endpoint, null, false);
+		}
+
+		public boolean doOutput() {
+			return _Body != null;
+		}
 	}
 
 }

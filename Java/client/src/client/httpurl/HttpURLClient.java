@@ -11,9 +11,12 @@
 
 package client.httpurl;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 
 import client.RestClient;
 
@@ -38,6 +41,31 @@ public class HttpURLClient extends RestClient {
 		return con;
 	}
 
+	protected void invoke(Command command) {
+		showCommand(command._Endpoint, command._Method);
+
+		try {
+			HttpURLConnection con = initConnection(_urlBase + command._Endpoint, command._Method, command.doOutput());
+
+			if (command.doOutput()) {
+				if (command._File) {
+					Files.copy(new File(command._Body).toPath(), con.getOutputStream());
+				} else {
+					OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
+					writer.write(command._Body);
+					writer.flush();
+					writer.close();
+				}
+			}
+
+			if (checkResponseCode(con.getResponseCode())) {
+				showResponse(con.getInputStream());
+			}
+		} catch (IOException e) {
+			_logger.writeError(e.getMessage());
+		}
+	}
+
 	public void doGet(String endpoint) {
 		showCommand(endpoint, "GET");
 
@@ -58,7 +86,7 @@ public class HttpURLClient extends RestClient {
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "PUT", true);
 
-			sendContent(con.getOutputStream(), value);
+			// sendContent(con.getOutputStream(), value);
 
 			if (checkResponseCode(con.getResponseCode())) {
 				showResponse(con.getInputStream());
@@ -74,7 +102,7 @@ public class HttpURLClient extends RestClient {
 		try {
 			HttpURLConnection con = initConnection(_urlBase + endpoint, "POST", true);
 
-			sendContent(con.getOutputStream(), value);
+			// sendContent(con.getOutputStream(), value);
 
 			if (checkResponseCode(con.getResponseCode())) {
 				showResponse(con.getInputStream());
