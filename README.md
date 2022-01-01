@@ -1,8 +1,9 @@
-![REST AREA](images/RESTarea.png)
 
 # RESTarea
 
 A place for REST....
+
+![REST AREA](images/RESTarea.png)
 
 ## RESTarea server
 
