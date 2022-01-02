@@ -1,13 +1,13 @@
 
-# RESTarea
+# REST_area
 
 A place for REST....
 
 ![REST AREA](images/RESTarea.png)
 
-## RESTarea server
+## REST_area server
 
-## RESTarea client
+## REST_area client
 
 ## Reference info
 
