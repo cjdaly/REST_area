@@ -3,7 +3,7 @@
 
 A place for REST....
 
-![REST AREA](images/RESTarea.png)
+![REST AREA](images/REST_area.png)
 
 ## REST_area server
 

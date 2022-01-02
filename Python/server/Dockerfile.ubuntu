@@ -11,8 +11,8 @@
 #*   cjdaly - initial API and implementation
 #****************************************************************************/
 
-# docker build -t restarea-ubuntu -f Dockerfile.ubuntu .
-# docker run -d -p 5000:5000 restarea-ubuntu
+# docker build -t rest_area-ubuntu -f Dockerfile.ubuntu .
+# docker run -d -p 5000:5000 rest_area-ubuntu
 
 FROM ubuntu:20.04
 
