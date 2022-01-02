@@ -16,7 +16,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		RestClientDriver driver = new RestClientDriver(args);
-		driver.processCommands();
+		driver.processAllCommands();
 	}
 
 }

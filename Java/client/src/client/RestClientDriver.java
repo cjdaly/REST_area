@@ -14,6 +14,7 @@ package client;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import client.RestClient.Command;
 import client.apache.ApacheClient;
 import client.httpurl.HttpURLClient;
 
@@ -26,9 +27,9 @@ public class RestClientDriver {
 	static final String DEFAULT_SERVER = "http://localhost:5000/";
 
 	static final Pattern OPTION_REGEX = Pattern.compile("^-(\\w+)=(.*)$");
-	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
 
 	private String[] _args;
+	private int _argIndex = 0;
 	private String _serverUrlBase = DEFAULT_SERVER;
 	private String _clientType = "httpurl";
 	private RestClient _client;
@@ -75,17 +76,17 @@ public class RestClientDriver {
 			break;
 		case "logger":
 			switch (value) {
-			case "write":
-				_logger.enableWriting(true, true);
+			case "out":
+				_logger.enableStdOut(true);
 				break;
-			case "nowrite":
-				_logger.enableWriting(false, false);
+			case "noout":
+				_logger.enableStdOut(false);
 				break;
-			case "buffer":
-				_logger.enableBuffering(true, true);
+			case "err":
+				_logger.enableStdErr(true);
 				break;
-			case "nobuffer":
-				_logger.enableBuffering(false, false);
+			case "noerr":
+				_logger.enableStdErr(false);
 				break;
 			}
 			break;
@@ -95,90 +96,53 @@ public class RestClientDriver {
 	}
 
 	/**
-	 * Process commands from the argument list. Commands begin with a name and are
-	 * optionally followed by a parenthetical list of parameters.
+	 * Process all commands from the argument list. Commands begin with a name and
+	 * are optionally followed by a parenthetical list of parameters.
 	 * 
 	 * Example: <code>name(arg1,arg2=foo,arg/3=foo/bar)</code>
 	 */
-	public void processCommands() {
-		for (String arg : _args) {
-			Matcher matcher = COMMAND_REGEX.matcher(arg);
-			if (matcher.matches()) {
-				processCommand(matcher.group(1), matcher.group(3));
-			} else if (!arg.startsWith("-")) {
-				_logger.writeError("Unrecognized command: " + arg);
-			}
+	public void processAllCommands() {
+		Command c = processNextCommand();
+		while (c != null) {
+			c = processNextCommand();
 		}
 	}
 
-	private void processCommand(String name, String paramList) {
-		String[] params;
-		if (paramList == null) {
-			params = new String[0];
-		} else {
-			params = paramList.split(",");
+	/**
+	 * Construct and invoke the next command from the supplied arguments.
+	 * 
+	 * @return the invoked Command or null if there are no remaining commands
+	 */
+	public Command processNextCommand() {
+		Command c = null;
+		while (_argIndex < _args.length) {
+			String arg = _args[_argIndex];
+			_argIndex++;
+			if (!arg.startsWith("-")) {
+				c = _client.newCommand(arg);
+				break;
+			}
 		}
-
-		switch (name.toLowerCase()) {
-		case "get":
-			_client.Get(params.length == 0 ? "" : params[0]);
-			break;
-		case "put":
-			if (params.length >= 2) {
-				_client.Put(params[0], params[1]);
-			} else {
-				_logger.writeError("Missing param to PUT!");
-			}
-			break;
-		case "putfile":
-			if (params.length >= 2) {
-				_client.PutFile(params[0], params[1]);
-			} else {
-				_logger.writeError("Missing param to PUTFILE!");
-			}
-			break;
-		case "post":
-			if (params.length >= 2) {
-				_client.Post(params[0], params[1]);
-			} else {
-				_logger.writeError("Missing param to POST!");
-			}
-			break;
-		case "postfile":
-			if (params.length >= 2) {
-				_client.PostFile(params[0], params[1]);
-			} else {
-				_logger.writeError("Missing param to POSTFILE!");
-			}
-			break;
-		case "delete":
-			if (params.length >= 1) {
-				_client.Delete(params[0]);
-			}
-			break;
-		case "sleep":
-			int millis = params.length == 0 ? 1000 : parseParamInt(params[0], 1000);
-
-			_logger.writeOutputs("", "!!! SLEEP: " + millis);
-			try {
-				Thread.sleep(millis);
-			} catch (InterruptedException e) {
-				// OK
-			}
-			break;
-		default:
-			_logger.writeError("Unknown command: " + name);
+		if (c != null && !c.isMalformed()) {
+			c.invoke();
 		}
+		return c;
 	}
 
-	private int parseParamInt(String param, int defaultValue) {
-		int value = defaultValue;
-		try {
-			value = Integer.parseInt(param);
-		} catch (NumberFormatException ex) {
-			// use default
+	/**
+	 * Construct and invoke a command from a single supplied argument.
+	 * 
+	 * @return the invoked Command or null if the argument is an option string.
+	 */
+	public Command processSingleCommand(String arg) {
+		Command c = null;
+		if (!arg.startsWith("-")) {
+			c = _client.newCommand(arg);
 		}
-		return value;
+		if (c != null && !c.isMalformed()) {
+			c.invoke();
+		}
+		return c;
 	}
 
 }

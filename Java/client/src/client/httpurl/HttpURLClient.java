@@ -42,24 +42,23 @@ public class HttpURLClient extends RestClient {
 	}
 
 	protected void invoke(Command command) {
-		showCommand(command._Endpoint, command._Method);
-
 		try {
-			HttpURLConnection con = initConnection(_urlBase + command._Endpoint, command._Method, command.doOutput());
+			HttpURLConnection con = initConnection(_urlBase + command.getRestEndpoint(), command.getRestMethod(),
+					command.expectRestBody());
 
-			if (command.doOutput()) {
-				if (command._File) {
-					Files.copy(new File(command._Body).toPath(), con.getOutputStream());
+			if (command.expectRestBody()) {
+				if (command.isRestBodyFile()) {
+					Files.copy(new File(command.getRestBody()).toPath(), con.getOutputStream());
 				} else {
 					OutputStreamWriter writer = new OutputStreamWriter(con.getOutputStream());
-					writer.write(command._Body);
+					writer.write(command.getRestBody());
 					writer.flush();
 					writer.close();
 				}
 			}
 
 			if (checkResponseCode(con.getResponseCode())) {
-				showResponse(con.getInputStream());
+				command.saveResponse(con.getInputStream());
 			}
 		} catch (IOException e) {
 			_logger.writeError(e.getMessage());

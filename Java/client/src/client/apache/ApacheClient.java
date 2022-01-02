@@ -48,45 +48,43 @@ public class ApacheClient extends RestClient {
 	}
 
 	protected void invoke(Command command) {
-		showCommand(command._Endpoint, command._Method);
-
 		HttpUriRequest req = null;
-		switch (command._Method) {
+		switch (command.getRestMethod()) {
 		case "GET":
-			req = new HttpGet(_urlBase + command._Endpoint);
+			req = new HttpGet(_urlBase + command.getRestEndpoint());
 			break;
 		case "PUT":
-			req = new HttpPut(_urlBase + command._Endpoint);
+			req = new HttpPut(_urlBase + command.getRestEndpoint());
 			break;
 		case "POST":
-			req = new HttpPost(_urlBase + command._Endpoint);
+			req = new HttpPost(_urlBase + command.getRestEndpoint());
 			break;
 		case "DELETE":
-			req = new HttpDelete(_urlBase + command._Endpoint);
+			req = new HttpDelete(_urlBase + command.getRestEndpoint());
 			break;
 		}
 
 		if (req == null) {
-			_logger.writeError("ApacheClient.invoke: Unknown method: " + command._Method);
+			_logger.writeError("ApacheClient.invoke: Unknown method: " + command.getRestMethod());
 			return;
 		}
 
 		initRequest(req);
 
 		try {
-			if (command.doOutput()) {
+			if (command.expectRestBody()) {
 				HttpEntityEnclosingRequest entReq = (HttpEntityEnclosingRequest) req;
-				if (command._File) {
-					entReq.setEntity(new FileEntity(new File(command._Body)));
+				if (command.isRestBodyFile()) {
+					entReq.setEntity(new FileEntity(new File(command.getRestBody())));
 				} else {
-					entReq.setEntity(new StringEntity(command._Body));
+					entReq.setEntity(new StringEntity(command.getRestBody()));
 				}
 			}
 			CloseableHttpResponse response = _httpClient.execute(req);
 
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (checkResponseCode(statusCode)) {
-				showResponse(response.getEntity().getContent());
+				command.saveResponse(response.getEntity().getContent());
 			}
 		} catch (IOException e) {
 			_logger.writeError(e.getMessage());

@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * RestClient is the abstract base class for specific REST client
@@ -44,74 +46,12 @@ public abstract class RestClient {
 	 */
 	protected abstract void invoke(Command command);
 
-	/**
-	 * Performs an HTTP GET with the specified <code>endpoint</code>.
-	 */
-	public Command Get(String endpoint) {
-		Command c = new Command("GET", endpoint);
-		invoke(c);
-		return c;
-	}
-
-	/**
-	 * Performs an HTTP PUT on the specified <code>endpoint</code> with
-	 * <code>value</code>.
-	 */
-	public Command Put(String endpoint, String value) {
-		Command c = new Command("PUT", endpoint, value, false);
-		invoke(c);
-		return c;
-	}
-
-	/**
-	 * Performs an HTTP POST to the specified <code>endpoint</code> with
-	 * <code>value</code>.
-	 */
-	public Command Post(String endpoint, String value) {
-		Command c = new Command("POST", endpoint, value, false);
-		invoke(c);
-		return c;
-	}
-
-	/**
-	 * Performs an HTTP DELETE of the specified <code>endpoint</code>.
-	 */
-	public Command Delete(String endpoint) {
-		Command c = new Command("DELETE", endpoint);
-		invoke(c);
-		return c;
-	}
-
-	/**
-	 * Performs an HTTP PUT to the specified <code>endpoint</code> with the contents
-	 * of the file specified by <code>pathname</code>.
-	 */
-	public Command PutFile(String endpoint, String pathname) {
-		Command c = new Command("PUT", endpoint, pathname, true);
-		invoke(c);
-		return c;
-	}
-
-	/**
-	 * Performs an HTTP POST to the specified <code>endpoint</code> with the
-	 * contents of the file specified by <code>pathname</code>.
-	 */
-	public Command PostFile(String endpoint, String pathname) {
-		Command c = new Command("POST", endpoint, pathname, true);
-		invoke(c);
-		return c;
-	}
-
 	protected boolean checkResponseCode(int code) {
 		if (code != 200) {
-			_logger.writeError("HTTP Error: " + code);
+			_logger.writeError("Unexpected HTTP response code: " + code);
 			return false;
 		}
 		return true;
-	}
-
-	protected void showCommand(String endpoint, String method) {
-		_logger.writeOutputs("", "!!! " + method + " /" + endpoint);
 	}
 
 	protected void showResponse(InputStream input) throws IOException {
@@ -125,25 +65,178 @@ public abstract class RestClient {
 		_logger.writeOutputs(lines.toArray(new String[0]));
 	}
 
+	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
+
+	public Command newCommand(String arg) {
+		return new Command(arg);
+	}
+
+	/**
+	 * Encapsulates details of a command, including response information from
+	 * invoking REST methods.
+	 */
 	public class Command {
-		public final String _Method;
-		public final String _Endpoint;
-		public final String _Body;
-		public final boolean _File;
 
-		Command(String method, String endpoint, String body, boolean isFile) {
-			_Method = method;
-			_Endpoint = endpoint;
-			_Body = body;
-			_File = isFile;
+		private String _arg;
+
+		// generic details
+		private String _name;
+		private String _paramText;
+		private String[] _params;
+
+		// REST details
+		private String _restMethod;
+		private String _restEndpoint;
+		private boolean _isRestBodyFile;
+		private String[] _responseLines;
+
+		public Command(String arg) {
+			_arg = arg;
+
+			Matcher matcher = COMMAND_REGEX.matcher(arg);
+			if (matcher.matches()) {
+				_name = matcher.group(1);
+
+				_paramText = matcher.group(3);
+				if (_paramText != null) {
+					_params = _paramText.split(",");
+				}
+				initRestDetails();
+			} else {
+				_logger.writeError("Constructed malformed command: " + _arg);
+			}
 		}
 
-		Command(String method, String endpoint) {
-			this(method, endpoint, null, false);
+		public String toString() {
+			StringBuilder sb = new StringBuilder("RestClient.Command: name=" + _name);
+			if (isRest()) {
+				sb.append(", method=" + getRestMethod());
+				sb.append(", endpoint=" + getRestEndpoint());
+			}
+			return sb.toString();
 		}
 
-		public boolean doOutput() {
-			return _Body != null;
+		/**
+		 * Set REST details, if applicable.
+		 */
+		private void initRestDetails() {
+			switch (_name.toLowerCase()) {
+			case "get":
+				_restMethod = "GET";
+				break;
+			case "put":
+				_restMethod = "PUT";
+				break;
+			case "post":
+				_restMethod = "POST";
+				break;
+			case "delete":
+				_restMethod = "DELETE";
+				break;
+			case "putfile":
+				_restMethod = "PUT";
+				_isRestBodyFile = true;
+				break;
+			case "postfile":
+				_restMethod = "POST";
+				_isRestBodyFile = true;
+				break;
+			}
+
+			if (_restMethod != null) {
+				_restEndpoint = _params == null ? "" : _params[0];
+			}
+		}
+
+		public String getArg() {
+			return _arg;
+		}
+
+		public boolean isMalformed() {
+			return _name == null;
+		}
+
+		public boolean isRest() {
+			return _restMethod != null;
+		}
+
+		public String getRestMethod() {
+			return _restMethod;
+		}
+
+		public String getRestEndpoint() {
+			return _restEndpoint;
+		}
+
+		public boolean isRestBodyFile() {
+			return _isRestBodyFile;
+		}
+
+		public String getRestBody() {
+			if (_params.length > 1) {
+				return _params[1];
+			} else {
+				return null;
+			}
+		}
+
+		public boolean expectRestBody() {
+			return "PUT".equals(getRestMethod()) || "POST".equals(getRestMethod());
+		}
+
+		public String[] getResponseLines() {
+			return _responseLines;
+		}
+
+		public void invoke() {
+			if (isMalformed()) {
+				_logger.writeError("Attempt to invoke malformed command: " + _arg);
+				return;
+			}
+
+			if (isRest()) {
+				if (expectRestBody() && getRestBody() == null) {
+					_logger.writeError("REST command missing expected body parameter!");
+					return;
+				}
+				_logger.writeOutputs("", this.toString());
+				RestClient.this.invoke(this);
+			} else {
+				if ("sleep".equals(_name)) {
+					int millis = _params.length == 0 ? 1000 : parseParamInt(_params[0], 1000);
+
+					_logger.writeOutputs("", "!!! SLEEP: " + millis);
+					try {
+						Thread.sleep(millis);
+					} catch (InterruptedException e) {
+						// OK
+					}
+				} else {
+					_logger.writeError("Attempt to invoke unknown command: " + _arg);
+				}
+			}
+
+		}
+
+		public void saveResponse(InputStream input) throws IOException {
+			ArrayList<String> _responseLines = new ArrayList<String>();
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			String line = reader.readLine();
+			while (line != null) {
+				_responseLines.add(line);
+				line = reader.readLine();
+			}
+			_logger.writeOutputs(_responseLines.toArray(new String[0]));
+		}
+
+		private int parseParamInt(String param, int defaultValue) {
+			int value = defaultValue;
+			try {
+				value = Integer.parseInt(param);
+			} catch (NumberFormatException ex) {
+				// use default
+			}
+			return value;
 		}
 	}
 
