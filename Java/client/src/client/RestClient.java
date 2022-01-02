@@ -12,8 +12,6 @@
 package client;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,78 +39,72 @@ public abstract class RestClient {
 	 */
 	protected abstract String getType();
 
-	public Command Get(String endpoint) {
-		Command c = new Command("GET", endpoint);
-		doGet(c._Endpoint);
-		return c;
-	}
-
+	/**
+	 * Invokes the supplied command with the HTTP client implementation.
+	 */
 	protected abstract void invoke(Command command);
 
 	/**
 	 * Performs an HTTP GET with the specified <code>endpoint</code>.
 	 */
-	public abstract void doGet(String endpoint);
+	public Command Get(String endpoint) {
+		Command c = new Command("GET", endpoint);
+		invoke(c);
+		return c;
+	}
 
 	/**
 	 * Performs an HTTP PUT on the specified <code>endpoint</code> with
 	 * <code>value</code>.
 	 */
-	public abstract void doPut(String endpoint, String value);
+	public Command Put(String endpoint, String value) {
+		Command c = new Command("PUT", endpoint, value, false);
+		invoke(c);
+		return c;
+	}
 
 	/**
 	 * Performs an HTTP POST to the specified <code>endpoint</code> with
 	 * <code>value</code>.
 	 */
-	public abstract void doPost(String endpoint, String value);
+	public Command Post(String endpoint, String value) {
+		Command c = new Command("POST", endpoint, value, false);
+		invoke(c);
+		return c;
+	}
 
 	/**
 	 * Performs an HTTP DELETE of the specified <code>endpoint</code>.
 	 */
-	public abstract void doDelete(String endpoint);
+	public Command Delete(String endpoint) {
+		Command c = new Command("DELETE", endpoint);
+		invoke(c);
+		return c;
+	}
 
 	/**
 	 * Performs an HTTP PUT to the specified <code>endpoint</code> with the contents
 	 * of the file specified by <code>pathname</code>.
 	 */
-	public void doPutFile(String endpoint, String pathname) {
-		String filedata = getFileData(pathname);
-		if (filedata != null) {
-			doPut(endpoint, filedata);
-		}
+	public Command PutFile(String endpoint, String pathname) {
+		Command c = new Command("PUT", endpoint, pathname, true);
+		invoke(c);
+		return c;
 	}
 
 	/**
 	 * Performs an HTTP POST to the specified <code>endpoint</code> with the
 	 * contents of the file specified by <code>pathname</code>.
 	 */
-	public void doPostFile(String endpoint, String pathname) {
-		String filedata = getFileData(pathname);
-		if (filedata != null) {
-			doPost(endpoint, filedata);
-		}
-	}
-
-	private String getFileData(String pathname) {
-		StringBuilder filedata = new StringBuilder();
-		File file = new File(pathname);
-		try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-			String line = reader.readLine();
-			while (line != null) {
-				filedata.append(line);
-				filedata.append("\n");
-				line = reader.readLine();
-			}
-		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
-			return null;
-		}
-		return filedata.toString();
+	public Command PostFile(String endpoint, String pathname) {
+		Command c = new Command("POST", endpoint, pathname, true);
+		invoke(c);
+		return c;
 	}
 
 	protected boolean checkResponseCode(int code) {
 		if (code != 200) {
-			_logger.writeError("??? HTTP Error: " + code);
+			_logger.writeError("HTTP Error: " + code);
 			return false;
 		}
 		return true;

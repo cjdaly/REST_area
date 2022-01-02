@@ -28,6 +28,9 @@ public class Logger {
 	private ArrayList<String> _stdOutBuffer = new ArrayList<String>();
 	private ArrayList<String> _stdErrBuffer = new ArrayList<String>();
 
+	private String _outputPrefix = "";
+	private String _errorPrefix = "??? ";
+
 	public Logger() {
 		this(true, false);
 	}
@@ -50,6 +53,7 @@ public class Logger {
 	//
 
 	public void writeOutput(String message) {
+		message = _outputPrefix + message;
 		if (_writeStdOut) {
 			System.out.println(message);
 		}
@@ -59,7 +63,7 @@ public class Logger {
 	}
 
 	public void writeOutputs(String... messages) {
-		String message = combineMessages(messages);
+		String message = combineMessages(_outputPrefix, messages);
 		if (_writeStdOut) {
 			System.out.println(message);
 		}
@@ -69,6 +73,7 @@ public class Logger {
 	}
 
 	public void writeError(String message) {
+		message = _errorPrefix + message;
 		if (_writeStdErr) {
 			System.err.println(message);
 		}
@@ -78,7 +83,7 @@ public class Logger {
 	}
 
 	public void writeErrors(String... messages) {
-		String message = combineMessages(messages);
+		String message = combineMessages(_errorPrefix, messages);
 		if (_writeStdErr) {
 			System.err.println(message);
 		}
@@ -87,9 +92,10 @@ public class Logger {
 		}
 	}
 
-	private String combineMessages(String... messages) {
+	private String combineMessages(String prefix, String... messages) {
 		StringBuilder sb = new StringBuilder();
 		for (String message : messages) {
+			sb.append(prefix);
 			sb.append(message);
 			sb.append("\n");
 		}

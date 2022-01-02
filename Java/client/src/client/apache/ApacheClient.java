@@ -67,7 +67,7 @@ public class ApacheClient extends RestClient {
 		}
 
 		if (req == null) {
-			_logger.writeError("??? ApacheClient.invoke: Unknown method: " + command._Method);
+			_logger.writeError("ApacheClient.invoke: Unknown method: " + command._Method);
 			return;
 		}
 
@@ -83,80 +83,6 @@ public class ApacheClient extends RestClient {
 				}
 			}
 			CloseableHttpResponse response = _httpClient.execute(req);
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (checkResponseCode(statusCode)) {
-				showResponse(response.getEntity().getContent());
-			}
-		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
-		}
-	}
-
-	public void doGet(String endpoint) {
-		showCommand(endpoint, "GET");
-
-		HttpGet get = new HttpGet(_urlBase + endpoint);
-		initRequest(get);
-
-		try {
-			CloseableHttpResponse response = _httpClient.execute(get);
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (checkResponseCode(statusCode)) {
-				showResponse(response.getEntity().getContent());
-			}
-		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
-		}
-	}
-
-	public void doPut(String endpoint, String value) {
-		showCommand(endpoint, "PUT");
-
-		HttpPut put = new HttpPut(_urlBase + endpoint);
-		initRequest(put);
-
-		try {
-			put.setEntity(new StringEntity(value));
-			CloseableHttpResponse response = _httpClient.execute(put);
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (checkResponseCode(statusCode)) {
-				showResponse(response.getEntity().getContent());
-			}
-		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
-		}
-	}
-
-	public void doPost(String endpoint, String value) {
-		showCommand(endpoint, "POST");
-
-		HttpPost post = new HttpPost(_urlBase + endpoint);
-		initRequest(post);
-
-		try {
-			post.setEntity(new StringEntity(value));
-			CloseableHttpResponse response = _httpClient.execute(post);
-
-			int statusCode = response.getStatusLine().getStatusCode();
-			if (checkResponseCode(statusCode)) {
-				showResponse(response.getEntity().getContent());
-			}
-		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
-		}
-	}
-
-	public void doDelete(String endpoint) {
-		showCommand(endpoint, "DELETE");
-
-		HttpDelete del = new HttpDelete(_urlBase + endpoint);
-		initRequest(del);
-
-		try {
-			CloseableHttpResponse response = _httpClient.execute(del);
 
 			int statusCode = response.getStatusLine().getStatusCode();
 			if (checkResponseCode(statusCode)) {

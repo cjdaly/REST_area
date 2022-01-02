@@ -11,8 +11,8 @@
 #*   cjdaly - initial API and implementation
 #****************************************************************************/
 
-# docker build -t flask -f Dockerfile .
-# docker run -d -p 5000:5000 flask
+# docker build -t restarea .
+# docker run -d -p 5000:5000 restarea
 
 FROM python:3.8-slim-buster
 

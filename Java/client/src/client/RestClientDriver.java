@@ -90,7 +90,7 @@ public class RestClientDriver {
 			}
 			break;
 		default:
-			_logger.writeError("??? Unknown option: " + name + " = " + value);
+			_logger.writeError("Unknown option: " + name + " = " + value);
 		}
 	}
 
@@ -105,8 +105,8 @@ public class RestClientDriver {
 			Matcher matcher = COMMAND_REGEX.matcher(arg);
 			if (matcher.matches()) {
 				processCommand(matcher.group(1), matcher.group(3));
-			} else {
-				_logger.writeError("??? Unrecognized command: " + arg);
+			} else if (!arg.startsWith("-")) {
+				_logger.writeError("Unrecognized command: " + arg);
 			}
 		}
 	}
@@ -121,39 +121,39 @@ public class RestClientDriver {
 
 		switch (name.toLowerCase()) {
 		case "get":
-			_client.doGet(params.length == 0 ? "" : params[0]);
+			_client.Get(params.length == 0 ? "" : params[0]);
 			break;
 		case "put":
 			if (params.length >= 2) {
-				_client.doPut(params[0], params[1]);
+				_client.Put(params[0], params[1]);
 			} else {
-				_logger.writeError("??? Missing param to PUT!");
+				_logger.writeError("Missing param to PUT!");
 			}
 			break;
 		case "putfile":
 			if (params.length >= 2) {
-				_client.doPutFile(params[0], params[1]);
+				_client.PutFile(params[0], params[1]);
 			} else {
-				_logger.writeError("??? Missing param to PUTFILE!");
+				_logger.writeError("Missing param to PUTFILE!");
 			}
 			break;
 		case "post":
 			if (params.length >= 2) {
-				_client.doPost(params[0], params[1]);
+				_client.Post(params[0], params[1]);
 			} else {
-				_logger.writeError("??? Missing param to POST!");
+				_logger.writeError("Missing param to POST!");
 			}
 			break;
 		case "postfile":
 			if (params.length >= 2) {
-				_client.doPostFile(params[0], params[1]);
+				_client.PostFile(params[0], params[1]);
 			} else {
-				_logger.writeError("??? Missing param to POSTFILE!");
+				_logger.writeError("Missing param to POSTFILE!");
 			}
 			break;
 		case "delete":
 			if (params.length >= 1) {
-				_client.doDelete(params[0]);
+				_client.Delete(params[0]);
 			}
 			break;
 		case "sleep":
@@ -167,7 +167,7 @@ public class RestClientDriver {
 			}
 			break;
 		default:
-			_logger.writeError("??? Unknown command: " + name);
+			_logger.writeError("Unknown command: " + name);
 		}
 	}
 

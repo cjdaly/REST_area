@@ -11,8 +11,8 @@
 #*   cjdaly - initial API and implementation
 #****************************************************************************/
 
-# docker build -t flask-ubuntu -f Dockerfile.ubuntu .
-# docker run -d -p 5000:5000 flask-ubuntu
+# docker build -t restarea-ubuntu -f Dockerfile.ubuntu .
+# docker run -d -p 5000:5000 restarea-ubuntu
 
 FROM ubuntu:20.04
 
@@ -21,8 +21,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update -y
 RUN apt-get install -y python3 python3-pip
-
-RUN pip3 install flask
 
 WORKDIR /app
 
