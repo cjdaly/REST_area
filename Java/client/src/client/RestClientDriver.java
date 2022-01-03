@@ -39,7 +39,7 @@ public class RestClientDriver {
 	 * Creates a new RestClientDriver with the supplier program arguments.
 	 */
 	public RestClientDriver(String[] args) {
-		_args = args;
+		_args = (args == null) ? new String[0] : args;
 		_logger = new Logger();
 
 		for (String arg : _args) {

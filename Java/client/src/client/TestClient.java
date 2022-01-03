@@ -11,25 +11,19 @@
 
 package client;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 class TestClient {
 
-	@BeforeAll
-	static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterAll
-	static void tearDownAfterClass() throws Exception {
-	}
-
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void SleepCommand() {
+		long beforeTimeMillis = System.currentTimeMillis();
+		RestClientDriver driver = new RestClientDriver(new String[] { "sleep(1234)" });
+		driver.processAllCommands();
+		long afterTimeMillis = System.currentTimeMillis();
+		assertTrue(beforeTimeMillis + 1200 < afterTimeMillis);
 	}
 
 }
