@@ -11,7 +11,7 @@ The REST_area server is implemented in Python with Flask.  Before running it, ma
 
     pip3 install flask
 
-After this the server can be launched directly from the `/Python/server` directory with:
+After this the server can be launched directly from the `Python/server` directory with:
 
     flask run
 
@@ -27,9 +27,16 @@ To GET a specified endpoint, like `/msgs/0`:
 
     ./main.sh "get(msgs/0)"
 
+__NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parenthesis and some other characters that may be used in commands.
+
 Available commands:
-- get(__endpoint__)
-- put(__endpoint__,__text__)
+- `get(`_endpoint_`)`
+- `put(`_endpoint_, _text_`)`
+- `putfile(`_endpoint_, _filepath_`)`
+- `post(`_endpoint_, _text_`)`
+- `postfile(`_endpoint_, _filepath_`)`
+- `delete(`_endpoint_`)`
+- `sleep(`_milliseconds_`)`
 
 ## Reference info
 
