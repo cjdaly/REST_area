@@ -42,7 +42,9 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
 
 ### Available options
 - `-client=apache` - use the Apache HTTP client (instead of default Java HttpURLConnection based client).
-- `-server=`_URL_ - use the provided REST_area server URL (instead of the default ``).
+- `-server=`_URL_ - use the provided REST_area server URL (instead of the default: `http://localhost:5000/`).
+- `-logger=out` or `-logger=noout` - enable/disable printing progress messages to standard output.
+- `-logger=err` or `-logger=noerr` - enable/disable printing error messages to standard error.
 
 ## Reference info
 
