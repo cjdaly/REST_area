@@ -7,7 +7,29 @@ A place for REST....
 
 ## REST_area server
 
+The REST_area server is implemented in Python with Flask.  Before running it, make sure to install Flask:
+
+    pip3 install flask
+
+After this the server can be launched directly from the `/Python/server` directory with:
+
+    flask run
+
+Alternatively one of the provided Dockerfiles may be used to run the server with Docker.
+
 ## REST_area client
+
+With the REST_area server running (see above), the client may be run from a terminal by running the `main.sh` script in the `Java/client` directory.  For example, to invoke an HTTP GET on the server root URL:
+
+    ./main.sh get
+
+To GET a specified endpoint, like `/msgs/0`:
+
+    ./main.sh "get(msgs/0)"
+
+Available commands:
+- get(__endpoint__)
+- put(__endpoint__,__text__)
 
 ## Reference info
 

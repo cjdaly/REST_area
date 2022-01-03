@@ -12,7 +12,7 @@
 #****************************************************************************/
 
 # docker build -t rest_area .
-# docker run -d -p 5000:5000 rest_area
+# docker run -p 5000:5000 rest_area
 
 FROM python:3.8-slim-buster
 
