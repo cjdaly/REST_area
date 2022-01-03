@@ -15,7 +15,7 @@ After this the server can be launched directly from the `Python/server` director
 
     flask run
 
-Alternatively one of the provided Dockerfiles may be used to run the server with Docker.
+Alternatively, one of the provided Dockerfiles may be used to run the server with Docker.
 
 ## REST_area client
 
@@ -27,7 +27,7 @@ To GET a specified endpoint, like `/msgs/0`:
 
     ./main.sh "get(msgs/0)"
 
-__NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parenthesis and some other characters that may be used in commands.
+__NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parentheses and some other characters that may be used in commands.
 
 ### Available commands:
 - `get(`_endpoint_`)`
