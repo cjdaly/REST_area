@@ -29,7 +29,7 @@ To GET a specified endpoint, like `/msgs/0`:
 
 __NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parenthesis and some other characters that may be used in commands.
 
-Available commands:
+### Available commands:
 - `get(`_endpoint_`)`
 - `put(`_endpoint_, _text_`)`
 - `putfile(`_endpoint_, _filepath_`)`
@@ -37,6 +37,12 @@ Available commands:
 - `postfile(`_endpoint_, _filepath_`)`
 - `delete(`_endpoint_`)`
 - `sleep(`_milliseconds_`)`
+
+Options may be passed to the REST_area client using the syntax `-optionName=value`.  All options are processed, in order, before any commands are run.
+
+### Available options
+- `-client=apache` - use the Apache HTTP client (instead of default Java HttpURLConnection based client).
+- `-server=`_URL_ - use the provided REST_area server URL (instead of the default ``).
 
 ## Reference info
 
