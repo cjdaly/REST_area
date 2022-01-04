@@ -60,7 +60,7 @@ public class Java11HttpClient extends RestClient {
 							headers(headers). //
 							PUT(BodyPublishers.ofFile(Path.of(command.getRestBody()))).build();
 				} catch (FileNotFoundException e) {
-					_logger.writeError(e.getMessage());
+					command.writeError(e.getMessage());
 					return;
 				}
 			} else {
@@ -78,7 +78,7 @@ public class Java11HttpClient extends RestClient {
 							headers(headers). //
 							POST(BodyPublishers.ofFile(Path.of(command.getRestBody()))).build();
 				} catch (FileNotFoundException e) {
-					_logger.writeError(e.getMessage());
+					command.writeError(e.getMessage());
 					return;
 				}
 			} else {
@@ -97,20 +97,19 @@ public class Java11HttpClient extends RestClient {
 		}
 
 		if (req == null) {
-			_logger.writeError("Java11HttpClient.invoke: Unknown method: " + command.getRestMethod());
+			command.writeError("Java11HttpClient.invoke: Unknown method: " + command.getRestMethod());
 			return;
 		}
 
 		try {
 			HttpResponse<Stream<String>> response = _httpClient.send(req, BodyHandlers.ofLines());
 			int statusCode = response.statusCode();
-			if (checkResponseCode(statusCode)) {
-				command.saveResponse(response.body());
-			}
+			command.saveStatusCode(statusCode);
+			command.saveResponse(response.body());
 		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
+			command.writeError(e.getMessage());
 		} catch (InterruptedException e) {
-			_logger.writeError(e.getMessage());
+			command.writeError(e.getMessage());
 		}
 	}
 

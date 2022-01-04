@@ -12,10 +12,13 @@
 package client;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-class TestClient {
+import client.RestClient.Command;
+
+public class TestClient {
 
 	@Test
 	void SleepCommand() {
@@ -24,6 +27,32 @@ class TestClient {
 		driver.processAllCommands();
 		long afterTimeMillis = System.currentTimeMillis();
 		assertTrue(beforeTimeMillis + 1200 < afterTimeMillis);
+	}
+
+	protected void testPutGetDeleteProp(RestClientDriver driver, String body) {
+		Command c;
+
+		// get missing property
+		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
+		assertEquals(404, c.getStatusCode());
+
+		// put the property
+		c = driver.processSingleCommand("put(props/testPutGetDel_" + driver.getClientType() + "," + body + ")");
+		assertEquals(200, c.getStatusCode());
+
+		// get property (now present)
+		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
+		assertEquals(200, c.getStatusCode());
+		assertEquals(1, c.getResponseLines().length);
+		assertEquals(body, c.getResponseLines()[0]);
+
+		// delete property
+		c = driver.processSingleCommand("delete(props/testPutGetDel_" + driver.getClientType() + ")");
+		assertEquals(200, c.getStatusCode());
+
+		// get (now) missing property
+		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
+		assertEquals(404, c.getStatusCode());
 	}
 
 }

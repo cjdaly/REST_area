@@ -9,7 +9,7 @@
  *   cjdaly - initial API and implementation
  ****************************************************************************/
 
-package client.apache;
+package client.java11;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,11 +20,11 @@ import client.RestClientDriver;
 import client.TestClient;
 import client.RestClient.Command;
 
-class TestApacheClient extends TestClient {
+class TestJava11HttpClient extends TestClient {
 
 	@Test
-	void GetRootApache() {
-		RestClientDriver driver = new RestClientDriver(new String[] { "-client=apache" });
+	void GetRootJava11() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=java11" });
 		Command command = driver.processSingleCommand("get");
 		assertNotNull(command);
 		assertEquals("GET", command.getRestMethod());
@@ -32,8 +32,8 @@ class TestApacheClient extends TestClient {
 	}
 
 	@Test
-	void PutGetDelete_Apache() {
-		RestClientDriver driver = new RestClientDriver(new String[] { "-client=apache" });
+	void PutGetDelete_Java11() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=java11" });
 		testPutGetDeleteProp(driver, "Hello!");
 	}
 

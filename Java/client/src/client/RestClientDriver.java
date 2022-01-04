@@ -66,6 +66,13 @@ public class RestClientDriver {
 	}
 
 	/**
+	 * @return the type name of the client implementation class
+	 */
+	public String getClientType() {
+		return _client.getType();
+	}
+
+	/**
 	 * Process <code>-key=value</code> formatted command line options from the
 	 * argument list.
 	 */

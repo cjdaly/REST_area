@@ -57,11 +57,11 @@ public class HttpURLClient extends RestClient {
 				}
 			}
 
-			if (checkResponseCode(con.getResponseCode())) {
-				command.saveResponse(con.getInputStream());
-			}
+			command.saveStatusCode(con.getResponseCode());
+			command.saveResponse(con.getInputStream());
+
 		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
+			command.writeError(e.getMessage());
 		}
 	}
 

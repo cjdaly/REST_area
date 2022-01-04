@@ -65,7 +65,7 @@ public class ApacheClient extends RestClient {
 		}
 
 		if (req == null) {
-			_logger.writeError("ApacheClient.invoke: Unknown method: " + command.getRestMethod());
+			command.writeError("ApacheClient.invoke: Unknown method: " + command.getRestMethod());
 			return;
 		}
 
@@ -83,11 +83,10 @@ public class ApacheClient extends RestClient {
 			CloseableHttpResponse response = _httpClient.execute(req);
 
 			int statusCode = response.getStatusLine().getStatusCode();
-			if (checkResponseCode(statusCode)) {
-				command.saveResponse(response.getEntity().getContent());
-			}
+			command.saveStatusCode(statusCode);
+			command.saveResponse(response.getEntity().getContent());
 		} catch (IOException e) {
-			_logger.writeError(e.getMessage());
+			command.writeError(e.getMessage());
 		}
 	}
 

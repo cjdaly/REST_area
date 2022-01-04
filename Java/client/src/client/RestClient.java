@@ -47,14 +47,6 @@ public abstract class RestClient {
 	 */
 	protected abstract void invoke(Command command);
 
-	protected boolean checkResponseCode(int code) {
-		if (code != 200) {
-			_logger.writeError("Unexpected HTTP response code: " + code);
-			return false;
-		}
-		return true;
-	}
-
 	protected void showResponse(InputStream input) throws IOException {
 		ArrayList<String> lines = new ArrayList<String>();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
@@ -68,6 +60,9 @@ public abstract class RestClient {
 
 	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
 
+	/**
+	 * Create a new Command for this RestClient with the provided argument.
+	 */
 	public Command newCommand(String arg) {
 		return new Command(arg);
 	}
@@ -89,7 +84,13 @@ public abstract class RestClient {
 		private String _restMethod;
 		private String _restEndpoint;
 		private boolean _isRestBodyFile;
+
+		// response info
+		private int _statusCode;
 		private ArrayList<String> _responseLines = new ArrayList<String>();
+
+		// errors
+		private ArrayList<String> _errorList = new ArrayList<String>();
 
 		public Command(String arg) {
 			_arg = arg;
@@ -104,7 +105,7 @@ public abstract class RestClient {
 				}
 				initRestDetails();
 			} else {
-				_logger.writeError("Constructed malformed command: " + _arg);
+				writeError("Constructed malformed command: " + _arg);
 			}
 		}
 
@@ -185,19 +186,27 @@ public abstract class RestClient {
 			return "PUT".equals(getRestMethod()) || "POST".equals(getRestMethod());
 		}
 
+		public void saveStatusCode(int statusCode) {
+			_statusCode = statusCode;
+		}
+
+		public int getStatusCode() {
+			return _statusCode;
+		}
+
 		public String[] getResponseLines() {
 			return _responseLines.toArray(new String[0]);
 		}
 
 		public void invoke() {
 			if (isMalformed()) {
-				_logger.writeError("Attempt to invoke malformed command: " + _arg);
+				writeError("Attempt to invoke malformed command: " + _arg);
 				return;
 			}
 
 			if (isRest()) {
 				if (expectRestBody() && getRestBody() == null) {
-					_logger.writeError("REST command missing expected body parameter!");
+					writeError("REST command missing expected body parameter!");
 					return;
 				}
 				_logger.writeOutputs("", this.toString());
@@ -213,7 +222,7 @@ public abstract class RestClient {
 						// OK
 					}
 				} else {
-					_logger.writeError("Attempt to invoke unknown command: " + _arg);
+					writeError("Attempt to invoke unknown command: " + _arg);
 				}
 			}
 		}
@@ -244,6 +253,18 @@ public abstract class RestClient {
 			}
 			return value;
 		}
+
+		// errors
+
+		public String[] getErrors() {
+			return _errorList.toArray(new String[0]);
+		}
+
+		public void writeError(String message) {
+			_errorList.add(message);
+			_logger.writeError(message);
+		}
+
 	}
 
 }

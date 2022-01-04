@@ -12,14 +12,15 @@
 package client.httpurl;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
-import client.RestClientDriver;
 import client.RestClient.Command;
+import client.RestClientDriver;
+import client.TestClient;
 
-class TestHttpURLClient {
+class TestHttpURLClient extends TestClient {
 
 	@Test
 	void GetRootHttpURL() {
@@ -27,6 +28,13 @@ class TestHttpURLClient {
 		Command command = driver.processSingleCommand("get");
 		assertNotNull(command);
 		assertEquals("GET", command.getRestMethod());
+		assertEquals(0, command.getErrors().length);
+	}
+
+	@Test
+	void PutGetDelete_HttpUrl() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=classic" });
+		testPutGetDeleteProp(driver, "Hello!");
 	}
 
 }
