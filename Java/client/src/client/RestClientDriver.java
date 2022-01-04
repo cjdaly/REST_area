@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import client.RestClient.Command;
 import client.apache.ApacheClient;
 import client.httpurl.HttpURLClient;
+import client.java11.Java11HttpClient;
 
 /**
  * RestClientDriver takes a series of options and commands and uses them to
@@ -51,6 +52,8 @@ public class RestClientDriver {
 
 		if (_clientType.toLowerCase().equals("apache")) {
 			_client = new ApacheClient(_serverUrlBase);
+		} else if (_clientType.toLowerCase().equals("java11")) {
+			_client = new Java11HttpClient(_serverUrlBase);
 		} else {
 			_client = new HttpURLClient(_serverUrlBase);
 		}

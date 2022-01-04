@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * RestClient is the abstract base class for specific REST client
@@ -88,7 +89,7 @@ public abstract class RestClient {
 		private String _restMethod;
 		private String _restEndpoint;
 		private boolean _isRestBodyFile;
-		private String[] _responseLines;
+		private ArrayList<String> _responseLines = new ArrayList<String>();
 
 		public Command(String arg) {
 			_arg = arg;
@@ -185,7 +186,7 @@ public abstract class RestClient {
 		}
 
 		public String[] getResponseLines() {
-			return _responseLines;
+			return _responseLines.toArray(new String[0]);
 		}
 
 		public void invoke() {
@@ -215,17 +216,22 @@ public abstract class RestClient {
 					_logger.writeError("Attempt to invoke unknown command: " + _arg);
 				}
 			}
-
 		}
 
 		public void saveResponse(InputStream input) throws IOException {
-			ArrayList<String> _responseLines = new ArrayList<String>();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			String line = reader.readLine();
 			while (line != null) {
 				_responseLines.add(line);
 				line = reader.readLine();
 			}
+			_logger.writeOutputs(_responseLines.toArray(new String[0]));
+		}
+
+		public void saveResponse(Stream<String> input) {
+			input.forEach(line -> {
+				_responseLines.add(line);
+			});
 			_logger.writeOutputs(_responseLines.toArray(new String[0]));
 		}
 
