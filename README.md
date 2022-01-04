@@ -42,24 +42,31 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
 
 ### Available options
 - `-client=apache` - use the Apache HTTP client (instead of default Java HttpURLConnection based client).
+- `-client=java11` - use `java.net.http.HttpClient` client implementation from Java 11.
 - `-server=`_URL_ - use the provided REST_area server URL (instead of the default: `http://localhost:5000/`).
 - `-logger=out` or `-logger=noout` - enable/disable printing progress messages to standard output.
 - `-logger=err` or `-logger=noerr` - enable/disable printing error messages to standard error.
 
 ## Reference info
 
-### media types (MIME)
+### headers and media types
 
-- https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+- headers: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
+- MIME: https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types
+- JSON: https://www.json.org/json-en.html
 
 ### Java client
 
 - 'classic' Java HttpURLConnection based client
   - https://mkyong.com/webservices/jax-rs/restfull-java-client-with-java-net-url/
+- Java 11 HttpClient
+  - https://reflectoring.io/comparison-of-java-http-clients/
 - Apache HttpClient
   - https://crunchify.com/how-to-create-restful-java-client-using-apache-httpclient-example/
   - https://itnext.io/how-to-create-a-simple-rest-client-for-testing-your-api-a0554d8380f8
   - https://www.javaguides.net/2018/10/apache-httpclient-get-post-put-and-delete-methods-example.html
+
+Java 11 HttpClient
 
 ### Python (Flask) server
 
