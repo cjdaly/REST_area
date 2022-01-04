@@ -49,6 +49,8 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
 
 ## Reference info
 
+- GitHub REST API: https://docs.github.com/en/rest
+
 ### headers and media types
 
 - headers: https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
