@@ -66,8 +66,6 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
   - https://itnext.io/how-to-create-a-simple-rest-client-for-testing-your-api-a0554d8380f8
   - https://www.javaguides.net/2018/10/apache-httpclient-get-post-put-and-delete-methods-example.html
 
-Java 11 HttpClient
-
 ### Python (Flask) server
 
 - https://flask.palletsprojects.com/en/2.0.x/quickstart/
