@@ -104,8 +104,7 @@ public class Java11HttpClient extends RestClient {
 		try {
 			HttpResponse<Stream<String>> response = _httpClient.send(req, BodyHandlers.ofLines());
 			int statusCode = response.statusCode();
-			command.saveStatusCode(statusCode);
-			command.saveResponse(response.body());
+			saveResponseDetails(command, statusCode, response.body());
 		} catch (IOException e) {
 			command.writeError(e.getMessage());
 		} catch (InterruptedException e) {

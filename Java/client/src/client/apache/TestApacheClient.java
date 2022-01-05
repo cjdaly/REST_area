@@ -37,4 +37,10 @@ class TestApacheClient extends TestClient {
 		testPutGetDeleteProp(driver, "Hello!");
 	}
 
+	@Test
+	void PostGet_Apache() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=apache" });
+		testPostGetMsg(driver, "Hello from " + driver.getClientType() + " client!");
+	}
+
 }

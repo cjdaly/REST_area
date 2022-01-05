@@ -37,4 +37,9 @@ class TestJava11HttpClient extends TestClient {
 		testPutGetDeleteProp(driver, "Hello!");
 	}
 
+	@Test
+	void PostGet_Java11() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=java11" });
+		testPostGetMsg(driver, "Hello from " + driver.getClientType() + " client!");
+	}
 }

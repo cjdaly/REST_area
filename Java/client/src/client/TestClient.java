@@ -14,6 +14,9 @@ package client;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.Test;
 
 import client.RestClient.Command;
@@ -27,6 +30,31 @@ public class TestClient {
 		driver.processAllCommands();
 		long afterTimeMillis = System.currentTimeMillis();
 		assertTrue(beforeTimeMillis + 1200 < afterTimeMillis);
+	}
+
+	@Test
+	void ServerURL() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-server=" + RestClientDriver.DEFAULT_SERVER });
+		Command c = driver.processSingleCommand("get");
+		assertEquals(200, c.getStatusCode());
+	}
+
+	@Test
+	void ProcessNextCommand() {
+		RestClientDriver driver = new RestClientDriver(new String[] { //
+				"sleep(123)", "get", "sleep(123)", "get" //
+		});
+
+		int count = 0;
+		Command command = driver.processNextCommand();
+		while (command != null) {
+			count++;
+			if (count % 2 == 0) {
+				assertEquals(200, command.getStatusCode());
+			}
+			command = driver.processNextCommand();
+		}
+		assertEquals(4, count);
 	}
 
 	protected void testPutGetDeleteProp(RestClientDriver driver, String body) {
@@ -53,6 +81,30 @@ public class TestClient {
 		// get (now) missing property
 		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
 		assertEquals(404, c.getStatusCode());
+	}
+
+	private static final Pattern MSG_NUM_REGEX = Pattern.compile("^New message #(\\d+).*");
+
+	protected void testPostGetMsg(RestClientDriver driver, String body) {
+		Command c;
+
+		// post the body text
+		c = driver.processSingleCommand("post(msgs," + body + ")");
+		assertEquals(200, c.getStatusCode());
+		assertEquals(1, c.getResponseLines().length);
+
+		// get the message number from the response
+		String responseBody = c.getResponseLines()[0];
+		assertTrue(responseBody.startsWith("New message #"));
+		Matcher matcher = MSG_NUM_REGEX.matcher(responseBody);
+		assertTrue(matcher.matches());
+		String msgNum = matcher.group(1);
+
+		// get the message
+		c = driver.processSingleCommand("get(msgs/" + msgNum + ")");
+		assertEquals(200, c.getStatusCode());
+		assertEquals(1, c.getResponseLines().length);
+		assertEquals(body, c.getResponseLines()[0]);
 	}
 
 }

@@ -13,6 +13,7 @@ package client.httpurl;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -57,8 +58,13 @@ public class HttpURLClient extends RestClient {
 				}
 			}
 
-			command.saveStatusCode(con.getResponseCode());
-			command.saveResponse(con.getInputStream());
+			InputStream inputStream = null;
+			try {
+				inputStream = con.getInputStream();
+			} catch (IOException e) {
+				// no InputStream? OK!
+			}
+			saveResponseDetails(command, con.getResponseCode(), inputStream);
 
 		} catch (IOException e) {
 			command.writeError(e.getMessage());

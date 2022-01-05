@@ -29,12 +29,13 @@ public abstract class RestClient {
 	protected String _urlBase;
 	protected Logger _logger;
 
+	/**
+	 * Construct a RestClient with a provided REST_area server URL.
+	 * 
+	 * @param urlBase the root level URL for the REST_area server
+	 */
 	protected RestClient(String urlBase) {
 		_urlBase = urlBase;
-	}
-
-	protected void setLogger(Logger logger) {
-		_logger = logger;
 	}
 
 	/**
@@ -47,16 +48,44 @@ public abstract class RestClient {
 	 */
 	protected abstract void invoke(Command command);
 
-	protected void showResponse(InputStream input) throws IOException {
-		ArrayList<String> lines = new ArrayList<String>();
-		BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-		String line = reader.readLine();
-		while (line != null) {
-			lines.add(line);
-			line = reader.readLine();
+	/**
+	 * subclasses call this to save HTTP response details after method invocation
+	 */
+	protected void saveResponseDetails(Command command, int statusCode, InputStream input) throws IOException {
+		command._statusCode = statusCode;
+
+		if (input != null) {
+			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			String line = reader.readLine();
+			while (line != null) {
+				command._responseLines.add(line);
+				line = reader.readLine();
+			}
+			_logger.writeOutputs(command._responseLines.toArray(new String[0]));
 		}
-		_logger.writeOutputs(lines.toArray(new String[0]));
 	}
+
+	/**
+	 * subclasses call this to save HTTP response details after method invocation
+	 */
+	protected void saveResponseDetails(Command command, int statusCode, Stream<String> input) {
+		command._statusCode = statusCode;
+
+		input.forEach(line -> {
+			command._responseLines.add(line);
+		});
+		_logger.writeOutputs(command._responseLines.toArray(new String[0]));
+	}
+
+	/**
+	 * Called by RestClientDriver set logger during initialization.
+	 */
+	void setLogger(Logger logger) {
+		_logger = logger;
+	}
+
+	//
+	// Command nested class and helpers
 
 	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
 
@@ -86,12 +115,15 @@ public abstract class RestClient {
 		private boolean _isRestBodyFile;
 
 		// response info
-		private int _statusCode;
-		private ArrayList<String> _responseLines = new ArrayList<String>();
+		int _statusCode;
+		ArrayList<String> _responseLines = new ArrayList<String>();
 
 		// errors
 		private ArrayList<String> _errorList = new ArrayList<String>();
 
+		/**
+		 * construct a Command with the provided argument text
+		 */
 		public Command(String arg) {
 			_arg = arg;
 
@@ -150,30 +182,54 @@ public abstract class RestClient {
 			}
 		}
 
+		/**
+		 * @return the raw arg used to instantiate the Command
+		 */
 		public String getArg() {
 			return _arg;
 		}
 
+		/**
+		 * @return true if the Command arg contained syntax errors
+		 */
 		public boolean isMalformed() {
 			return _name == null;
 		}
 
+		/**
+		 * @return true if the Command is a REST method (e.g. GET, PUT, etc.), otherwise
+		 *         false (e.g. sleep command)
+		 */
 		public boolean isRest() {
 			return _restMethod != null;
 		}
 
+		/**
+		 * @return the REST method name (e.g. GET, PUT, etc.)
+		 */
 		public String getRestMethod() {
 			return _restMethod;
 		}
 
+		/**
+		 * @return the REST endpoint passed as the first command parameter
+		 */
 		public String getRestEndpoint() {
 			return _restEndpoint;
 		}
 
+		/**
+		 * @return true if the second command parameter represents a filename (for PUT
+		 *         or POST), false if the second parameter is literal text to send.
+		 */
 		public boolean isRestBodyFile() {
 			return _isRestBodyFile;
 		}
 
+		/**
+		 * @return the second command parameter, representing the REST body to PUT/POST,
+		 *         or null if there is no second parameter.
+		 */
 		public String getRestBody() {
 			if (_params.length > 1) {
 				return _params[1];
@@ -182,22 +238,30 @@ public abstract class RestClient {
 			}
 		}
 
+		/**
+		 * @return true if this command is a PUT or POST method, with body text to send.
+		 */
 		public boolean expectRestBody() {
 			return "PUT".equals(getRestMethod()) || "POST".equals(getRestMethod());
 		}
 
-		public void saveStatusCode(int statusCode) {
-			_statusCode = statusCode;
-		}
-
+		/**
+		 * @return the status code from the HTTP method invocation
+		 */
 		public int getStatusCode() {
 			return _statusCode;
 		}
 
+		/**
+		 * @return an array of lines in the HTTP method invocation response text
+		 */
 		public String[] getResponseLines() {
 			return _responseLines.toArray(new String[0]);
 		}
 
+		/**
+		 * Invoke the REST method described by this Command
+		 */
 		public void invoke() {
 			if (isMalformed()) {
 				writeError("Attempt to invoke malformed command: " + _arg);
@@ -227,23 +291,6 @@ public abstract class RestClient {
 			}
 		}
 
-		public void saveResponse(InputStream input) throws IOException {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			String line = reader.readLine();
-			while (line != null) {
-				_responseLines.add(line);
-				line = reader.readLine();
-			}
-			_logger.writeOutputs(_responseLines.toArray(new String[0]));
-		}
-
-		public void saveResponse(Stream<String> input) {
-			input.forEach(line -> {
-				_responseLines.add(line);
-			});
-			_logger.writeOutputs(_responseLines.toArray(new String[0]));
-		}
-
 		private int parseParamInt(String param, int defaultValue) {
 			int value = defaultValue;
 			try {
@@ -256,10 +303,16 @@ public abstract class RestClient {
 
 		// errors
 
+		/**
+		 * @return a list of errors produced when processing the command
+		 */
 		public String[] getErrors() {
 			return _errorList.toArray(new String[0]);
 		}
 
+		/**
+		 * logs the provided error message and save it for later querying
+		 */
 		public void writeError(String message) {
 			_errorList.add(message);
 			_logger.writeError(message);

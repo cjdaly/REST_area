@@ -37,4 +37,10 @@ class TestHttpURLClient extends TestClient {
 		testPutGetDeleteProp(driver, "Hello!");
 	}
 
+	@Test
+	void PostGet_HttpUrl() {
+		RestClientDriver driver = new RestClientDriver(new String[] { "-client=classic" });
+		testPostGetMsg(driver, "Hello from " + driver.getClientType() + " client!");
+	}
+
 }
