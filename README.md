@@ -17,6 +17,14 @@ After this the server can be launched directly from the `Python/server` director
 
 Alternatively, one of the provided Dockerfiles may be used to run the server with Docker.
 
+### Available endpoints:
+
+- `/` - Server root endpoint will return the message `Hello from REST_area server!`.
+- `/msgs` - POST to add a message; GET to see message count.
+- `/msgs/<num>` - GET or DELETE message number `<num>`.
+- `/props` - GET to see properties count.
+- `/props/<k>` - GET, PUT or DELETE value for property with key `<k>`.
+
 ## REST_area client
 
 With the REST_area server running (see above), the client may be run from a terminal by running the `main.sh` script in the `Java/client` directory.  For example, to invoke an HTTP GET on the server root URL:
