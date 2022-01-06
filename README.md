@@ -17,7 +17,7 @@ After this the server can be launched directly from the `Python/server` director
 
 Alternatively, one of the provided Dockerfiles may be used to run the server with Docker.
 
-### Available endpoints:
+### Available endpoints
 
 - `/` - Server root endpoint will return the message `Hello from REST_area server!`.
 - `/msgs` - POST to add a message; GET to see message count.
@@ -37,7 +37,7 @@ To GET a specified endpoint, like `/msgs/0`:
 
 __NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parentheses and some other characters that may be used in commands.
 
-### Available commands:
+### Available commands
 - `get(`_endpoint_`)` - HTTP GET the provided _endpoint_.
 - `put(`_endpoint_, _text_`)` - HTTP PUT to _endpoint_ with provided _text_.
 - `putfile(`_endpoint_, _filepath_`)` - HTTP PUT to _endpoint_ with contents of file at _filepath_.
