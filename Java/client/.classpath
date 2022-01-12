@@ -11,5 +11,10 @@
 	<classpathentry kind="lib" path="/Applications/Eclipse.app/Contents/Eclipse/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar"/>
 	<classpathentry kind="lib" path="/Applications/Eclipse.app/Contents/Eclipse/plugins/org.eclipse.json_1.1.100.v201901071922.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
+	<classpathentry kind="lib" path="lib/jline-3.21.0.jar" sourcepath="lib/jline-3.21.0-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/java-rest-client/lib/jline-3.21.0-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
