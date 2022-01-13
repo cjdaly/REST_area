@@ -49,35 +49,6 @@ public abstract class RestClient {
 	protected abstract void invoke(Command command);
 
 	/**
-	 * subclasses call this to save HTTP response details after method invocation
-	 */
-	protected void saveResponseDetails(Command command, int statusCode, InputStream input) throws IOException {
-		command._statusCode = statusCode;
-
-		if (input != null) {
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-			String line = reader.readLine();
-			while (line != null) {
-				command._responseLines.add(line);
-				line = reader.readLine();
-			}
-			_logger.writeOutputs(command._responseLines.toArray(new String[0]));
-		}
-	}
-
-	/**
-	 * subclasses call this to save HTTP response details after method invocation
-	 */
-	protected void saveResponseDetails(Command command, int statusCode, Stream<String> input) {
-		command._statusCode = statusCode;
-
-		input.forEach(line -> {
-			command._responseLines.add(line);
-		});
-		_logger.writeOutputs(command._responseLines.toArray(new String[0]));
-	}
-
-	/**
 	 * Called by RestClientDriver set logger during initialization.
 	 */
 	void setLogger(Logger logger) {
@@ -87,7 +58,7 @@ public abstract class RestClient {
 	//
 	// Command nested class and helpers
 
-	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([a-zA-Z0-9.,;/?=!_~ ]*)[)])?$");
+	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([^)]*)[)])?$");
 
 	/**
 	 * Create a new Command for this RestClient with the provided argument.
@@ -243,6 +214,37 @@ public abstract class RestClient {
 		 */
 		public boolean expectRestBody() {
 			return "PUT".equals(getRestMethod()) || "POST".equals(getRestMethod());
+		}
+
+		/**
+		 * RestClient subclasses call this to save HTTP response details after method
+		 * invocation
+		 */
+		public void saveResponseDetails(int statusCode, InputStream input) throws IOException {
+			_statusCode = statusCode;
+
+			if (input != null) {
+				BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+				String line = reader.readLine();
+				while (line != null) {
+					_responseLines.add(line);
+					line = reader.readLine();
+				}
+				_logger.writeOutputs(_responseLines.toArray(new String[0]));
+			}
+		}
+
+		/**
+		 * RestClient subclasses call this to save HTTP response details after method
+		 * invocation
+		 */
+		public void saveResponseDetails(int statusCode, Stream<String> input) {
+			_statusCode = statusCode;
+
+			input.forEach(line -> {
+				_responseLines.add(line);
+			});
+			_logger.writeOutputs(_responseLines.toArray(new String[0]));
 		}
 
 		/**

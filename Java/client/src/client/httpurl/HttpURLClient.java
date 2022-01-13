@@ -64,7 +64,8 @@ public class HttpURLClient extends RestClient {
 			} catch (IOException e) {
 				// no InputStream? OK!
 			}
-			saveResponseDetails(command, con.getResponseCode(), inputStream);
+
+			command.saveResponseDetails(con.getResponseCode(), inputStream);
 
 		} catch (IOException e) {
 			command.writeError(e.getMessage());

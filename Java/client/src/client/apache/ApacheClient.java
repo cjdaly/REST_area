@@ -83,7 +83,7 @@ public class ApacheClient extends RestClient {
 			CloseableHttpResponse response = _httpClient.execute(req);
 
 			int statusCode = response.getStatusLine().getStatusCode();
-			saveResponseDetails(command, statusCode, response.getEntity().getContent());
+			command.saveResponseDetails(statusCode, response.getEntity().getContent());
 		} catch (IOException e) {
 			command.writeError(e.getMessage());
 		}
