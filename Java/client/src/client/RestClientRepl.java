@@ -35,7 +35,7 @@ public class RestClientRepl {
 	private LineReader _reader;
 
 	public RestClientRepl(String[] args) throws IOException {
-		_driver = new RestClientDriver(args);
+		_driver = new RestClientDriver(args, new ReplLogger());
 		_terminal = TerminalBuilder.terminal();
 
 		StringsCompleter completer = new StringsCompleter("get", "put", "post", "delete", "exit");
@@ -87,5 +87,24 @@ public class RestClientRepl {
 		}
 
 		_terminal.close();
+	}
+
+	private static class ReplLogger implements Logger {
+
+		public void enableStdOut(boolean isEnabled) {
+
+		}
+
+		public void enableStdErr(boolean isEnabled) {
+
+		}
+
+		public void writeOutputs(String... messages) {
+
+		}
+
+		public void writeErrors(String... messages) {
+
+		}
 	}
 }

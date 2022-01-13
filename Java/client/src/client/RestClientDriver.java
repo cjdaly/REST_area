@@ -37,11 +37,18 @@ public class RestClientDriver {
 	private Logger _logger;
 
 	/**
-	 * Creates a new RestClientDriver with the supplier program arguments.
+	 * Creates a new RestClientDriver with the supplied program arguments.
 	 */
 	public RestClientDriver(String[] args) {
+		this(args, new Logger.DefaultLogger());
+	}
+
+	/**
+	 * Creates a new RestClientDriver with the supplied program arguments.
+	 */
+	public RestClientDriver(String[] args, Logger logger) {
 		_args = (args == null) ? new String[0] : args;
-		_logger = new Logger();
+		_logger = logger;
 
 		for (String arg : _args) {
 			Matcher matcher = OPTION_REGEX.matcher(arg);
@@ -101,7 +108,7 @@ public class RestClientDriver {
 			}
 			break;
 		default:
-			_logger.writeError("Unknown option: " + name + " = " + value);
+			_logger.writeErrors("Unknown option: " + name + " = " + value);
 		}
 	}
 

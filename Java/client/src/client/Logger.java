@@ -15,60 +15,61 @@ package client;
  * Logger allows for both direct output and buffering of messages and
  * distinguishes between normal output and error type messages.
  */
-public class Logger {
+public interface Logger {
 
-	private boolean _writeStdOut = true;
-	private boolean _writeStdErr = true;
+	/**
+	 * Controls whether standard output messages are displayed or suppressed.
+	 */
+	void enableStdOut(boolean isEnabled);
 
-	private String _outputPrefix = "";
-	private String _errorPrefix = "??? ";
+	/**
+	 * Controls whether standard error messages are displayed or suppressed.
+	 */
+	void enableStdErr(boolean isEnabled);
 
-	public void enableStdOut(boolean isEnabled) {
-		_writeStdOut = isEnabled;
-	}
+	/**
+	 * Write messages to standard output.
+	 */
+	void writeOutputs(String... messages);
 
-	public void enableStdErr(boolean isEnabled) {
-		_writeStdErr = isEnabled;
-	}
+	/**
+	 * Write messages to standard error.
+	 */
+	void writeErrors(String... messages);
 
-	//
+	/**
+	 * Default logger, just writes lines through to stdout or stderr.
+	 */
+	public static class DefaultLogger implements Logger {
 
-	public void writeOutput(String message) {
-		message = _outputPrefix + message;
-		if (_writeStdOut) {
-			System.out.println(message);
+		private boolean _writeStdOut = true;
+		private boolean _writeStdErr = true;
+
+		public void enableStdOut(boolean isEnabled) {
+			_writeStdOut = isEnabled;
 		}
-	}
 
-	public void writeOutputs(String... messages) {
-		String message = combineMessages(_outputPrefix, messages);
-		if (_writeStdOut) {
-			System.out.print(message);
+		public void enableStdErr(boolean isEnabled) {
+			_writeStdErr = isEnabled;
 		}
-	}
 
-	public void writeError(String message) {
-		message = _errorPrefix + message;
-		if (_writeStdErr) {
-			System.err.println(message);
+		//
+
+		public void writeOutputs(String... messages) {
+			if (_writeStdOut) {
+				for (String message : messages) {
+					System.out.println(message);
+				}
+			}
 		}
-	}
 
-	public void writeErrors(String... messages) {
-		String message = combineMessages(_errorPrefix, messages);
-		if (_writeStdErr) {
-			System.err.print(message);
+		public void writeErrors(String... messages) {
+			if (_writeStdErr) {
+				for (String message : messages) {
+					System.err.println(message);
+				}
+			}
 		}
-	}
 
-	private String combineMessages(String prefix, String... messages) {
-		StringBuilder sb = new StringBuilder();
-		for (String message : messages) {
-			sb.append(prefix);
-			sb.append(message);
-			sb.append("\n");
-		}
-		return sb.toString();
 	}
-
 }

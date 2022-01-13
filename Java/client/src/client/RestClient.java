@@ -317,7 +317,7 @@ public abstract class RestClient {
 		 */
 		public void writeError(String message) {
 			_errorList.add(message);
-			_logger.writeError(message);
+			_logger.writeErrors(message);
 		}
 
 	}
