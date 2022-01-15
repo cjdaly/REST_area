@@ -18,10 +18,6 @@ import org.jline.reader.LineReaderBuilder;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
-import org.jline.utils.AttributedStringBuilder;
-import org.jline.utils.AttributedStyle;
-
-import client.command.Command;
 
 public class RestClientRepl {
 
@@ -55,23 +51,26 @@ public class RestClientRepl {
 			_terminal.flush();
 			if ("exit".equals(line)) {
 				done = true;
-			} else if ("color".equals(line)) {
-				System.out.println(new AttributedStringBuilder() //
-						.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW)).append("hmm") //
-						.style(AttributedStyle.DEFAULT.background(AttributedStyle.CYAN)).append("foo!") //
-						.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA)).append("!bar") //
-						.toAnsi());
-			} else if ("get".equals(line)) {
-				Command command = _driver.processSingleCommand(line);
-				for (String error : command.getErrors()) {
-					String errOut = new AttributedStringBuilder() //
-							.style(AttributedStyle.DEFAULT.background(AttributedStyle.RED)) //
-							.append("ERROR: ") //
-							.style(AttributedStyle.DEFAULT) //
-							.append(error) //
-							.toAnsi();
-					System.out.println(errOut);
-				}
+			} else {
+				_driver.processSingleCommand(line);
+			}
+//			else if ("color".equals(line)) {
+//				System.out.println(new AttributedStringBuilder() //
+//						.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW)).append("hmm") //
+//						.style(AttributedStyle.DEFAULT.background(AttributedStyle.CYAN)).append("foo!") //
+//						.style(AttributedStyle.DEFAULT.foreground(AttributedStyle.MAGENTA)).append("!bar") //
+//						.toAnsi());
+//			} else if ("get".equals(line)) {
+//				Command command = _driver.processSingleCommand(line);
+//				for (String error : command.getErrors()) {
+//					String errOut = new AttributedStringBuilder() //
+//							.style(AttributedStyle.DEFAULT.background(AttributedStyle.RED)) //
+//							.append("ERROR: ") //
+//							.style(AttributedStyle.DEFAULT) //
+//							.append(error) //
+//							.toAnsi();
+//					System.out.println(errOut);
+//				}
 //				for (String lineOut : command.getResponseLines()) {
 //					String respOut = new AttributedStringBuilder() //
 //							.style(AttributedStyle.DEFAULT.background(AttributedStyle.GREEN)) //
@@ -81,30 +80,34 @@ public class RestClientRepl {
 //							.toAnsi();
 //					System.out.println(respOut);
 //				}
-			} else {
-				System.out.println("!!! Unknown: " + line);
-			}
+//			} else {
+//				System.out.println("!!! Unknown: " + line);
+//			}
 		}
 
 		_terminal.close();
 	}
 
-	private static class ReplLogger implements Logger {
+	private static class ReplLogger extends Logger.DefaultLogger {
 
-		public void enableStdOut(boolean isEnabled) {
-
-		}
-
-		public void enableStdErr(boolean isEnabled) {
-
-		}
-
-		public void writeOutputs(String... messages) {
-
-		}
-
-		public void writeErrors(String... messages) {
-
-		}
 	}
+
+//	private static class ReplLogger implements Logger {
+//
+//		public void enableStdOut(boolean isEnabled) {
+//
+//		}
+//
+//		public void enableStdErr(boolean isEnabled) {
+//
+//		}
+//
+//		public void writeOutputs(String... messages) {
+//
+//		}
+//
+//		public void writeErrors(String... messages) {
+//
+//		}
+//	}
 }
