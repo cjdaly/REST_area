@@ -20,6 +20,7 @@ import java.net.URL;
 import java.nio.file.Files;
 
 import client.RestClient;
+import client.command.HttpCommand;
 
 public class HttpURLClient extends RestClient {
 
@@ -42,7 +43,7 @@ public class HttpURLClient extends RestClient {
 		return con;
 	}
 
-	protected void invoke(Command command) {
+	public void invoke(HttpCommand command) {
 		try {
 			HttpURLConnection con = initConnection(_urlBase + command.getRestEndpoint(), command.getRestMethod(),
 					command.expectRestBody());

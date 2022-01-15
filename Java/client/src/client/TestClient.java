@@ -19,7 +19,8 @@ import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.Test;
 
-import client.RestClient.Command;
+import client.command.Command;
+import client.command.HttpCommand;
 
 public class TestClient {
 
@@ -36,7 +37,9 @@ public class TestClient {
 	void ServerURL() {
 		RestClientDriver driver = new RestClientDriver(new String[] { "-server=" + RestClientDriver.DEFAULT_SERVER });
 		Command c = driver.processSingleCommand("get");
-		assertEquals(200, c.getStatusCode());
+		assertTrue(c instanceof HttpCommand);
+		HttpCommand hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
 	}
 
 	@Test
@@ -50,7 +53,9 @@ public class TestClient {
 		while (command != null) {
 			count++;
 			if (count % 2 == 0) {
-				assertEquals(200, command.getStatusCode());
+				assertTrue(command instanceof HttpCommand);
+				HttpCommand hc = (HttpCommand) command;
+				assertEquals(200, hc.getStatusCode());
 			}
 			command = driver.processNextCommand();
 		}
@@ -59,42 +64,56 @@ public class TestClient {
 
 	protected void testPutGetDeleteProp(RestClientDriver driver, String body) {
 		Command c;
+		HttpCommand hc;
 
 		// get missing property
 		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
-		assertEquals(404, c.getStatusCode());
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(404, hc.getStatusCode());
 
 		// put the property
 		c = driver.processSingleCommand("put(props/testPutGetDel_" + driver.getClientType() + "," + body + ")");
-		assertEquals(200, c.getStatusCode());
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
 
 		// get property (now present)
 		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
-		assertEquals(200, c.getStatusCode());
-		assertEquals(1, c.getResponseLines().length);
-		assertEquals(body, c.getResponseLines()[0]);
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
+		assertEquals(1, hc.getResponseLines().length);
+		assertEquals(body, hc.getResponseLines()[0]);
 
 		// delete property
 		c = driver.processSingleCommand("delete(props/testPutGetDel_" + driver.getClientType() + ")");
-		assertEquals(200, c.getStatusCode());
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
 
 		// get (now) missing property
 		c = driver.processSingleCommand("get(props/testPutGetDel_" + driver.getClientType() + ")");
-		assertEquals(404, c.getStatusCode());
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(404, hc.getStatusCode());
 	}
 
 	private static final Pattern MSG_NUM_REGEX = Pattern.compile("^New message #(\\d+).*");
 
 	protected void testPostGetMsg(RestClientDriver driver, String body) {
 		Command c;
+		HttpCommand hc;
 
 		// post the body text
 		c = driver.processSingleCommand("post(msgs," + body + ")");
-		assertEquals(200, c.getStatusCode());
-		assertEquals(1, c.getResponseLines().length);
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
+		assertEquals(1, hc.getResponseLines().length);
 
 		// get the message number from the response
-		String responseBody = c.getResponseLines()[0];
+		String responseBody = hc.getResponseLines()[0];
 		assertTrue(responseBody.startsWith("New message #"));
 		Matcher matcher = MSG_NUM_REGEX.matcher(responseBody);
 		assertTrue(matcher.matches());
@@ -102,9 +121,11 @@ public class TestClient {
 
 		// get the message
 		c = driver.processSingleCommand("get(msgs/" + msgNum + ")");
-		assertEquals(200, c.getStatusCode());
-		assertEquals(1, c.getResponseLines().length);
-		assertEquals(body, c.getResponseLines()[0]);
+		assertTrue(c instanceof HttpCommand);
+		hc = (HttpCommand) c;
+		assertEquals(200, hc.getStatusCode());
+		assertEquals(1, hc.getResponseLines().length);
+		assertEquals(body, hc.getResponseLines()[0]);
 	}
 
 }

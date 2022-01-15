@@ -28,6 +28,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 
 import client.RestClient;
+import client.command.HttpCommand;
 
 public class ApacheClient extends RestClient {
 
@@ -47,7 +48,7 @@ public class ApacheClient extends RestClient {
 		req.addHeader("content-type", "text/plain");
 	}
 
-	protected void invoke(Command command) {
+	public void invoke(HttpCommand command) {
 		HttpUriRequest req = null;
 		switch (command.getRestMethod()) {
 		case "GET":

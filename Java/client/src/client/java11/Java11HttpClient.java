@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import client.RestClient;
+import client.command.HttpCommand;
 
 public class Java11HttpClient extends RestClient {
 
@@ -37,7 +38,7 @@ public class Java11HttpClient extends RestClient {
 		return "Java11HttpClient";
 	}
 
-	protected void invoke(Command command) {
+	public void invoke(HttpCommand command) {
 		HttpRequest req = null;
 
 		String[] headers = new String[] { //

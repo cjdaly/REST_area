@@ -14,8 +14,8 @@ package client;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import client.RestClient.Command;
 import client.apache.ApacheClient;
+import client.command.Command;
 import client.httpurl.HttpURLClient;
 import client.java11.Java11HttpClient;
 

@@ -12,13 +12,15 @@
 package client.apache;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 import client.RestClientDriver;
 import client.TestClient;
-import client.RestClient.Command;
+import client.command.Command;
+import client.command.HttpCommand;
 
 class TestApacheClient extends TestClient {
 
@@ -27,8 +29,10 @@ class TestApacheClient extends TestClient {
 		RestClientDriver driver = new RestClientDriver(new String[] { "-client=apache" });
 		Command command = driver.processSingleCommand("get");
 		assertNotNull(command);
-		assertEquals("GET", command.getRestMethod());
-		assertEquals(0, command.getErrors().length);
+		assertTrue(command instanceof HttpCommand);
+		HttpCommand hc = (HttpCommand) command;
+		assertEquals("GET", hc.getRestMethod());
+		assertEquals(0, hc.getErrors().length);
 	}
 
 	@Test

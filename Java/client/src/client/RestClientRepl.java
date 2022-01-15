@@ -21,7 +21,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
 
-import client.RestClient.Command;
+import client.command.Command;
 
 public class RestClientRepl {
 
@@ -72,15 +72,15 @@ public class RestClientRepl {
 							.toAnsi();
 					System.out.println(errOut);
 				}
-				for (String lineOut : command._responseLines) {
-					String respOut = new AttributedStringBuilder() //
-							.style(AttributedStyle.DEFAULT.background(AttributedStyle.GREEN)) //
-							.append("[" + command.getStatusCode() + "] ") //
-							.style(AttributedStyle.DEFAULT) //
-							.append(lineOut) //
-							.toAnsi();
-					System.out.println(respOut);
-				}
+//				for (String lineOut : command.getResponseLines()) {
+//					String respOut = new AttributedStringBuilder() //
+//							.style(AttributedStyle.DEFAULT.background(AttributedStyle.GREEN)) //
+//							.append("[" + command.getStatusCode() + "] ") //
+//							.style(AttributedStyle.DEFAULT) //
+//							.append(lineOut) //
+//							.toAnsi();
+//					System.out.println(respOut);
+//				}
 			} else {
 				System.out.println("!!! Unknown: " + line);
 			}
