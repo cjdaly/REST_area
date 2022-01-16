@@ -41,7 +41,7 @@ public class HttpCommand extends Command {
 			writeError("REST command missing expected body parameter!");
 			return;
 		}
-		logger().writeOutputs("", this.toString());
+		output().Info.writeln(this.toString());
 		_client.invoke(this);
 	}
 
@@ -151,7 +151,7 @@ public class HttpCommand extends Command {
 				_responseLines.add(line);
 				line = reader.readLine();
 			}
-			logger().writeOutputs(_responseLines.toArray(new String[0]));
+			output().Info.writeln(_responseLines.toArray(new String[0]));
 		}
 	}
 
@@ -165,7 +165,7 @@ public class HttpCommand extends Command {
 		input.forEach(line -> {
 			_responseLines.add(line);
 		});
-		logger().writeOutputs(_responseLines.toArray(new String[0]));
+		output().Info.writeln(_responseLines.toArray(new String[0]));
 	}
 
 	/**

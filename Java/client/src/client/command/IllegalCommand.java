@@ -24,6 +24,6 @@ public class IllegalCommand extends Command {
 	}
 
 	public void invoke() {
-		logger().writeErrors("Invoked illegal command: " + _name);
+		output().Error.writeln("Invoked illegal command: " + _name);
 	}
 }

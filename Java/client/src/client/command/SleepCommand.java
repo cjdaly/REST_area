@@ -22,7 +22,7 @@ public class SleepCommand extends Command {
 	public void invoke() {
 		int millis = _params.length == 0 ? 1000 : parseParamInt(_params[0], 1000);
 		//
-		logger().writeOutputs("", "!!! SLEEP: " + millis);
+		output().Info.writeln("!!! SLEEP: " + millis);
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {

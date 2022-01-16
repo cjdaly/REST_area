@@ -15,8 +15,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import client.Logger;
 import client.RestClient;
+import client.output.Output;
 
 /**
  * Encapsulates details of a command, including response information from
@@ -54,11 +54,11 @@ public abstract class Command {
 			case "sleep":
 				return new SleepCommand(client, name, params);
 			default:
-				client.getLogger().writeErrors("Constructed unknown command: " + arg);
+				client.getOutput().Error.writeln("Constructed unknown command: " + arg);
 				return new IllegalCommand(client, name, params);
 			}
 		} else {
-			client.getLogger().writeErrors("Constructed malformed command: " + arg);
+			client.getOutput().Error.writeln("Constructed malformed command: " + arg);
 			return new IllegalCommand(client, null);
 		}
 	}
@@ -76,8 +76,8 @@ public abstract class Command {
 		this(client, name, null);
 	}
 
-	protected Logger logger() {
-		return _client.getLogger();
+	protected Output output() {
+		return _client.getOutput();
 	}
 
 	public String toString() {
@@ -128,7 +128,7 @@ public abstract class Command {
 	 */
 	public void writeError(String message) {
 		_errorList.add(message);
-		logger().writeErrors(message);
+		output().Error.writeln(message);
 	}
 
 }

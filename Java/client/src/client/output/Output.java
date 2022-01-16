@@ -19,6 +19,12 @@ public class Output {
 	public final Mode Error = new Mode(System.out);
 	public final Mode Debug = new Mode(System.err);
 
+	public void ansi(boolean ansi) {
+		Info.ansi(ansi);
+		Error.ansi(ansi);
+		Debug.ansi(ansi);
+	}
+
 	public class Mode {
 		private PrintStream _output;
 		private boolean _enabled = true;

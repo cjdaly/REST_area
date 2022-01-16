@@ -18,6 +18,7 @@ import client.command.Command;
 import client.impl.apache.ApacheClient;
 import client.impl.httpurl.HttpURLClient;
 import client.impl.java11.Java11HttpClient;
+import client.output.Output;
 
 /**
  * RestClientDriver takes a series of options and commands and uses them to
@@ -34,26 +35,25 @@ public class RestClientDriver {
 	private String _serverUrlBase = DEFAULT_SERVER;
 	private String _clientType = "httpurl";
 	private RestClient _client;
-	private Logger _logger;
 
 	/**
 	 * Creates a new RestClientDriver with the supplied program arguments.
 	 */
 	public RestClientDriver(String[] args) {
-		this(args, new Logger.DefaultLogger());
+		this(args, null);
 	}
 
 	/**
 	 * Creates a new RestClientDriver with the supplied program arguments.
 	 */
-	public RestClientDriver(String[] args, Logger logger) {
+	public RestClientDriver(String[] args, Output output) {
 		_args = (args == null) ? new String[0] : args;
-		_logger = logger;
+		output = output != null ? output : new Output();
 
 		for (String arg : _args) {
 			Matcher matcher = OPTION_REGEX.matcher(arg);
 			if (matcher.matches()) {
-				processOption(matcher.group(1), matcher.group(2));
+				processOption(matcher.group(1), matcher.group(2), output);
 			}
 		}
 
@@ -64,11 +64,11 @@ public class RestClientDriver {
 		} else {
 			_client = new HttpURLClient(_serverUrlBase);
 		}
-		_client.setLogger(_logger);
+		_client.setOutput(output);
 
-		_logger.writeOutputs( //
-				"", // blank line
-				"REST_area Java Client (type: " + _client.getType() + ", server: " + _serverUrlBase + ")" //
+		output.Info.writeln("REST_area Java Client" + //
+				" (type: " + _client.getType() + //
+				", server: " + _serverUrlBase + ")" //
 		);
 	}
 
@@ -83,7 +83,7 @@ public class RestClientDriver {
 	 * Process <code>-key=value</code> formatted command line options from the
 	 * argument list.
 	 */
-	private void processOption(String name, String value) {
+	private void processOption(String name, String value, Output output) {
 		switch (name.toLowerCase()) {
 		case "server":
 			_serverUrlBase = value;
@@ -91,24 +91,18 @@ public class RestClientDriver {
 		case "client":
 			_clientType = value;
 			break;
-		case "logger":
+		case "output":
 			switch (value) {
-			case "out":
-				_logger.enableStdOut(true);
+			case "ansi":
+				output.ansi(true);
 				break;
-			case "noout":
-				_logger.enableStdOut(false);
-				break;
-			case "err":
-				_logger.enableStdErr(true);
-				break;
-			case "noerr":
-				_logger.enableStdErr(false);
+			case "noansi":
+				output.ansi(false);
 				break;
 			}
 			break;
 		default:
-			_logger.writeErrors("Unknown option: " + name + " = " + value);
+			output.Error.writeln("Unknown option: " + name + " = " + value);
 		}
 	}
 

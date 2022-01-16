@@ -13,6 +13,7 @@ package client;
 
 import client.command.Command;
 import client.command.HttpCommand;
+import client.output.Output;
 
 /**
  * RestClient is the abstract base class for specific REST client
@@ -21,7 +22,7 @@ import client.command.HttpCommand;
 public abstract class RestClient {
 
 	protected String _urlBase;
-	protected Logger _logger;
+	protected Output _output;
 
 	/**
 	 * Construct a RestClient with a provided REST_area server URL.
@@ -29,7 +30,18 @@ public abstract class RestClient {
 	 * @param urlBase the root level URL for the REST_area server
 	 */
 	protected RestClient(String urlBase) {
+		this(urlBase, null);
+	}
+
+	/**
+	 * Construct a RestClient with a provided REST_area server URL and output.
+	 * 
+	 * @param urlBase the root level URL for the REST_area server
+	 * @param output
+	 */
+	protected RestClient(String urlBase, Output output) {
 		_urlBase = urlBase;
+		_output = output != null ? output : new Output();
 	}
 
 	/**
@@ -43,17 +55,17 @@ public abstract class RestClient {
 	public abstract void invoke(HttpCommand command);
 
 	/**
-	 * @return the Logger for this client
+	 * @return the Output for this client
 	 */
-	public Logger getLogger() {
-		return _logger;
+	public Output getOutput() {
+		return _output;
 	}
 
 	/**
-	 * Called by RestClientDriver set logger during initialization.
+	 * Called by RestClientDriver set output during initialization.
 	 */
-	void setLogger(Logger logger) {
-		_logger = logger;
+	void setOutput(Output output) {
+		_output = output;
 	}
 
 	/**
