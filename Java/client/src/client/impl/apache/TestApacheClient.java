@@ -9,7 +9,7 @@
  *   cjdaly - initial API and implementation
  ****************************************************************************/
 
-package client.apache;
+package client.impl.apache;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

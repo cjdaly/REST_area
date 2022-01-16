@@ -14,10 +14,10 @@ package client;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import client.apache.ApacheClient;
 import client.command.Command;
-import client.httpurl.HttpURLClient;
-import client.java11.Java11HttpClient;
+import client.impl.apache.ApacheClient;
+import client.impl.httpurl.HttpURLClient;
+import client.impl.java11.Java11HttpClient;
 
 /**
  * RestClientDriver takes a series of options and commands and uses them to

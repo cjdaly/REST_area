@@ -9,7 +9,7 @@
  *   cjdaly - initial API and implementation
  ****************************************************************************/
 
-package client.httpurl;
+package client.impl.httpurl;
 
 import java.io.File;
 import java.io.IOException;

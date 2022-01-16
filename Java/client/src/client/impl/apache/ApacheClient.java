@@ -9,7 +9,7 @@
  *   cjdaly - initial API and implementation
  ****************************************************************************/
 
-package client.apache;
+package client.impl.apache;
 
 import java.io.File;
 import java.io.IOException;

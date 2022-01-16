@@ -9,7 +9,7 @@
  *   cjdaly - initial API and implementation
  ****************************************************************************/
 
-package client.httpurl;
+package client.impl.httpurl;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
