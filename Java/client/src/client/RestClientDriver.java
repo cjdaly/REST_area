@@ -19,6 +19,9 @@ import client.impl.apache.ApacheClient;
 import client.impl.httpurl.HttpURLClient;
 import client.impl.java11.Java11HttpClient;
 import client.output.Output;
+import client.output.Style;
+import client.output.Style.Attr;
+import client.output.Style.Color;
 
 /**
  * RestClientDriver takes a series of options and commands and uses them to
@@ -66,10 +69,9 @@ public class RestClientDriver {
 		}
 		_client.setOutput(output);
 
-		output.Info.writeln("REST_area Java Client" + //
-				" (type: " + _client.getType() + //
-				", server: " + _serverUrlBase + ")" //
-		);
+		Style style_Ra = new Style(Color.White, Color.Green, Attr.Bold);
+		output.Info.write(style_Ra, "REST_area");
+		output.Info.writeln(" Java client, version 0.0.1");
 	}
 
 	/**

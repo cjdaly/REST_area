@@ -20,6 +20,9 @@ import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
 import client.output.Output;
+import client.output.Style;
+import client.output.Style.Attr;
+import client.output.Style.Color;
 
 public class RestClientRepl {
 
@@ -35,6 +38,11 @@ public class RestClientRepl {
 	public RestClientRepl(String[] args) throws IOException {
 		Output output = new Output();
 		output.ansi(true);
+
+		Style style_Err = new Style(Color.Yellow, Color.Red, Attr.Bold);
+		String prefix_Err = style_Err.builder().append("ERROR").toAnsi() + "> ";
+		output.Error.linePrefix("ERROR> ", prefix_Err);
+
 		_driver = new RestClientDriver(args, output);
 		_terminal = TerminalBuilder.terminal();
 
@@ -47,13 +55,17 @@ public class RestClientRepl {
 	}
 
 	public void go() throws IOException {
+		Style style_Ra = new Style(Color.White, Color.Green, Attr.Bold);
+		String prompt_Ra = style_Ra.builder().append("R_a").toAnsi();
 		String lineRaw = null;
 		boolean done = false;
 		while (!done) {
-			lineRaw = _reader.readLine("R_a> ", null);
+			lineRaw = _reader.readLine(prompt_Ra + "> ", null);
 			String line = lineRaw.trim();
 			_terminal.flush();
-			if ("exit".equals(line)) {
+			if ("".equals(line)) {
+				// ...
+			} else if ("exit".equals(line)) {
 				done = true;
 			} else {
 				_driver.processSingleCommand(line);

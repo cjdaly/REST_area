@@ -12,17 +12,22 @@
 package client.command;
 
 import client.RestClient;
+import client.output.Style;
+import client.output.Style.Attr;
 
 public class SleepCommand extends Command {
 
+	private Style _style;
+
 	public SleepCommand(RestClient client, String name, String[] params) {
 		super(client, name, params);
+		_style = new Style(Attr.Italic);
 	}
 
 	public void invoke() {
 		int millis = _params.length == 0 ? 1000 : parseParamInt(_params[0], 1000);
 		//
-		output().Info.writeln("!!! SLEEP: " + millis);
+		output().Info.writeln(_style, "Sleeping for " + millis + " milliseconds...");
 		try {
 			Thread.sleep(millis);
 		} catch (InterruptedException e) {

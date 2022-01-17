@@ -29,7 +29,11 @@ public class Output {
 		private PrintStream _output;
 		private boolean _enabled = true;
 		private boolean _ansi = false;
+
 		private Style _defaultStyle = null;
+
+		private String _linePrefixPlain = null;
+		private String _linePrefixStyled = null;
 
 		Mode(PrintStream output) {
 			_output = output;
@@ -40,19 +44,20 @@ public class Output {
 				style = _defaultStyle;
 			}
 
-			if (_enabled) {
-				if (_ansi && style != null) {
-					if (eol) {
-						_output.println(style.builder().append(message).toAnsi());
-					} else {
-						_output.print(style.builder().append(message).toAnsi());
-					}
+			if (!_enabled || message == null)
+				return;
+
+			if (_ansi && style != null) {
+				if (eol) {
+					_output.println(style.builder().append(message).toAnsi());
 				} else {
-					if (eol) {
-						_output.println(message);
-					} else {
-						_output.print(message);
-					}
+					_output.print(style.builder().append(message).toAnsi());
+				}
+			} else {
+				if (eol) {
+					_output.println(message);
+				} else {
+					_output.print(message);
 				}
 			}
 		}
@@ -70,15 +75,26 @@ public class Output {
 				style = _defaultStyle;
 			}
 
-			if (_enabled && messages != null) {
-				if (_ansi && style != null) {
-					for (String message : messages) {
+			if (!_enabled || messages == null || messages.length == 0)
+				return;
+
+			if (_ansi) {
+				for (String message : messages) {
+					if (_linePrefixStyled != null) {
+						_output.print(_linePrefixStyled);
+					}
+					if (style == null) {
+						_output.println(message);
+					} else {
 						_output.println(style.builder().append(message).toAnsi());
 					}
-				} else {
-					for (String message : messages) {
-						_output.println(message);
+				}
+			} else {
+				for (String message : messages) {
+					if (_linePrefixPlain != null) {
+						_output.print(_linePrefixPlain);
 					}
+					_output.println(message);
 				}
 			}
 		}
@@ -109,6 +125,11 @@ public class Output {
 
 		public void defaultStyle(Style style) {
 			_defaultStyle = style;
+		}
+
+		public void linePrefix(String plain, String styled) {
+			_linePrefixPlain = plain;
+			_linePrefixStyled = styled;
 		}
 
 	}
