@@ -46,7 +46,11 @@ public class RestClientRepl {
 		_driver = new RestClientDriver(args, output);
 		_terminal = TerminalBuilder.terminal();
 
-		StringsCompleter completer = new StringsCompleter("get", "put", "post", "delete", "exit");
+		StringsCompleter completer = new StringsCompleter( //
+				"get", "put", "putfile", "post", "postfile", "delete", // REST
+				"color", //
+				"sleep", //
+				"exit");
 
 		_reader = LineReaderBuilder.builder() //
 				.terminal(_terminal) //

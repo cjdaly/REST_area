@@ -27,8 +27,8 @@ public abstract class Command {
 	static final Pattern COMMAND_REGEX = Pattern.compile("^(\\w+)([(]([^)]*)[)])?$");
 
 	protected final RestClient _client;
-	protected String _name;
-	protected String[] _params;
+	protected final String _name;
+	protected final String[] _params;
 
 	private ArrayList<String> _errorList = new ArrayList<String>();
 
@@ -51,6 +51,8 @@ public abstract class Command {
 			case "postfile":
 			case "delete":
 				return new HttpCommand(client, name, params);
+			case "color":
+				return new ColorCommand(client, name, params);
 			case "sleep":
 				return new SleepCommand(client, name, params);
 			default:
