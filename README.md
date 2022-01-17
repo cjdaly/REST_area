@@ -37,6 +37,10 @@ To GET a specified endpoint, like `/msgs/0`:
 
 __NOTE:__ Quotes are necessary, as shown above, to prevent the shell from interpreting parentheses and some other characters that may be used in commands.
 
+### (New!) REPL client
+
+Start the new/experimental REPL client with `./repl.sh`.  The REPL is implemented using the [JLine library](https://github.com/jline/jline3).
+
 ### Available commands
 - `get(`_endpoint_`)` - HTTP GET the provided _endpoint_.
 - `put(`_endpoint_, _text_`)` - HTTP PUT to _endpoint_ with provided _text_.
@@ -52,8 +56,7 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
 - `-client=apache` - use the Apache HTTP client (instead of default Java HttpURLConnection based client).
 - `-client=java11` - use `java.net.http.HttpClient` client implementation from Java 11.
 - `-server=`_URL_ - use the provided REST_area server URL (instead of the default: `http://localhost:5000/`).
-- `-logger=out` or `-logger=noout` - enable/disable printing progress messages to standard output.
-- `-logger=err` or `-logger=noerr` - enable/disable printing error messages to standard error.
+- `-output=ansi` or `-output=noansi` - enable/disable ANSI formatting in output messages.
 
 ## Reference info
 
@@ -75,6 +78,9 @@ Options may be passed to the REST_area client using the syntax `-optionName=valu
   - https://crunchify.com/how-to-create-restful-java-client-using-apache-httpclient-example/
   - https://itnext.io/how-to-create-a-simple-rest-client-for-testing-your-api-a0554d8380f8
   - https://www.javaguides.net/2018/10/apache-httpclient-get-post-put-and-delete-methods-example.html
+- REPL (JLine 3)
+  - https://github.com/jline/jline3/wiki
+  - REPLs in Java (are hard) - https://darkcoding.net/software/non-blocking-console-io-is-not-possible/ 
 
 ### Python (Flask) server
 
