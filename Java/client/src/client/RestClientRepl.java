@@ -59,7 +59,7 @@ public class RestClientRepl {
 	}
 
 	public void go() throws IOException {
-		Style style_Ra = new Style(Color.White, Color.Green, Attr.Bold);
+		Style style_Ra = new Style(Color.White, Color.Blue, Attr.Bold);
 		String prompt_Ra = style_Ra.builder().append("R_a").toAnsi();
 		String lineRaw = null;
 		boolean done = false;

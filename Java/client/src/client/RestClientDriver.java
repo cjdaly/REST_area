@@ -69,7 +69,7 @@ public class RestClientDriver {
 		}
 		_client.setOutput(output);
 
-		Style style_Ra = new Style(Color.White, Color.Green, Attr.Bold);
+		Style style_Ra = new Style(Color.White, Color.Blue, Attr.Bold);
 		output.Info.write(style_Ra, "REST_area");
 		output.Info.writeln(" Java client, version 0.0.1");
 	}
